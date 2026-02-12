@@ -19,17 +19,17 @@ import Assist from "../../../classes/assist";
 import PageConfig from "../../../classes/page-config";
 import { useNavigate } from "react-router-dom";
 
-const AdminExpenseEarningGroups = () => {
+const AdminLabs = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [loadingText, setLoadingText] = useState("Loading data...");
   const [loading, setLoading] = useState(true);
 
   const pageConfig = new PageConfig(
-    "Benchs",
-    "lab-benches/list",
+    "Labs",
+    "labs/list",
     "",
-    "Bench",
+    "Lab",
     ""
   );
 
@@ -57,7 +57,7 @@ const AdminExpenseEarningGroups = () => {
     () => ({
       icon: "add",
       text: "Refresh",
-      onClick: () => navigate('/admin/benches/add'),
+      onClick: () => navigate('/admin/labs/add'),
     }),
     []
   );
@@ -117,7 +117,7 @@ const AdminExpenseEarningGroups = () => {
                 cellRender={(e) => {
                   return (
                     <a
-                      href={`/admin/benches/edit/${e.data.id}`}
+                      href={`/admin/labs/edit/${e.data.id}`}
                     >
                       {e.text}
                     </a>
@@ -145,4 +145,4 @@ const AdminExpenseEarningGroups = () => {
   );
 };
 
-export default AdminExpenseEarningGroups;
+export default AdminLabs;

@@ -102,22 +102,28 @@ class Assist {
   }
 
   // Currency formatting
-  static currencyFormatter = new Intl.NumberFormat("en-US", {
+  static currencyFormatterZMW = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "ZMW",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-
+  static currencyFormatterUSD = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
+  });
   static numberFormatter = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "ZMW",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 3,
   });
 
-  static formatCurrency(value: number): string {
-    return this.currencyFormatter.format(value);
+  static formatCurrencyZMW(value: number): string {
+    return this.currencyFormatterZMW.format(value);
+  }
+  static formatCurrencyUSD(value: number): string {
+    return this.currencyFormatterUSD.format(value);
   }
   static formatNumber(value: number): string {
     return this.numberFormatter.format(value);
@@ -132,11 +138,9 @@ class Assist {
   }
 
   static setMobile(code: string, phone: string): string {
-   
     const safeCode = `${code.substring(1)}${phone}`;
 
     return safeCode;
-
   }
 
   static getDateText(mysqlDate: string): string {
@@ -189,6 +193,21 @@ class Assist {
     return periodId;
   }
 
+  static percentChange(original: number, newValue: number): number {
+    if (original === 0) {
+      return 0;
+    }
+    return ((newValue - original) / original) * 100;
+  }
+
+  static percentOf(value: number, percent: number): number {
+    return value * (percent / 100);
+  }
+
+  static applyPercent(value: number, percent: number): number {
+    return value * (1 + percent / 100);
+  }
+
   static getMonthName(monthNumber: number): string {
     // Month numbers are 1-indexed (1 for January, 12 for December)
     // Date objects use 0-indexed months, so we subtract 1.
@@ -237,7 +256,7 @@ class Assist {
     const pad = (n: number) => n.toString().padStart(2, "0");
 
     const mysqlTime = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(
-      now.getSeconds()
+      now.getSeconds(),
     )}`;
     return mysqlTime;
   }
@@ -265,7 +284,7 @@ class Assist {
         message: message,
       },
       type,
-      6000
+      6000,
     );
   }
 
@@ -310,7 +329,7 @@ class Assist {
   static async loadData(title: string, url: string) {
     Assist.log(
       `Starting to load ${title} from server using url ${AppInfo.apiUrl}${url}`,
-      "log"
+      "log",
     );
 
     return new Promise(function (resolve, reject) {
@@ -318,7 +337,7 @@ class Assist {
         .get(`${AppInfo.apiUrl}${url}`)
         .then((response) => {
           Assist.log(
-            `Response completed for loading ${title} from server with status ${response.status}`
+            `Response completed for loading ${title} from server with status ${response.status}`,
           );
 
           if (response.status !== 200) {
@@ -330,8 +349,8 @@ class Assist {
         .catch((err) => {
           Assist.log(
             `An error occured when loading ${title} from server: ${JSON.stringify(
-              err
-            )}`
+              err,
+            )}`,
           );
 
           //user friendly message
@@ -365,7 +384,7 @@ class Assist {
     title: string,
     url: string,
     postData: any,
-    id: Number
+    id: Number,
   ) {
     const method = id == 0 ? "post" : "put";
     const verb = id == 0 ? "post" : "put";
@@ -374,7 +393,7 @@ class Assist {
       `Starting to delete ${title} with id {key} from server using url ${
         AppInfo.apiUrl + url
       }`,
-      "log"
+      "log",
     );
 
     return new Promise(function (myResolve, myReject) {
@@ -385,12 +404,12 @@ class Assist {
       })
         .then((response) => {
           Assist.log(
-            `Response completed when performing ${method} for ${title} from server with status ${response.status}`
+            `Response completed when performing ${method} for ${title} from server with status ${response.status}`,
           );
 
           if (response.status !== 200) {
             myReject(
-              `Unable to ${verb} ${title}. Error code ${response.status}`
+              `Unable to ${verb} ${title}. Error code ${response.status}`,
             );
           } else {
             myResolve(response.data);
@@ -398,7 +417,7 @@ class Assist {
         })
         .catch((err) => {
           Assist.log(
-            `An error occured when performing ${method} for ${title} from server`
+            `An error occured when performing ${method} for ${title} from server`,
           );
 
           //user friendly message
@@ -435,7 +454,7 @@ class Assist {
       `Starting to delete ${title} with id {key} from server using url ${
         AppInfo.apiUrl + url
       }`,
-      "log"
+      "log",
     );
 
     return new Promise(function (myResolve, myReject) {
@@ -447,29 +466,29 @@ class Assist {
       })
         .then((response) => {
           Assist.log(
-            `Response has completed for deleting ${title} from server`
+            `Response has completed for deleting ${title} from server`,
           );
 
           if (typeof response.data == "string") {
             Assist.log(
               `Unable to process response for deleting ${title} from server: ${JSON.stringify(
-                response
-              )}`
+                response,
+              )}`,
             );
 
             myReject(
               new TaskResult(
                 false,
                 "Unable to process server response from server",
-                null
-              )
+                null,
+              ),
             );
           } else {
             if (response.data.succeeded) {
               myResolve(new TaskResult(true, "", response.data.items));
             } else {
               Assist.log(
-                `Unable to delete ${title} from server: ${response.data.message}`
+                `Unable to delete ${title} from server: ${response.data.message}`,
               );
               myReject(new TaskResult(false, response.data.message, null));
             }
@@ -478,15 +497,15 @@ class Assist {
         .catch((error) => {
           Assist.log(
             `An error occured when deleting ${title} from server: ${JSON.stringify(
-              error
-            )}`
+              error,
+            )}`,
           );
           myReject(
             new TaskResult(
               false,
               `An error occured when deleting ${title} from server`,
-              null
-            )
+              null,
+            ),
           );
         });
     });
@@ -498,9 +517,9 @@ class Assist {
     Assist.log(
       `Starting to download JSON with filename ${filename} and except ${jsonData.substring(
         0,
-        10
+        10,
       )} from server using url ${AppInfo.apiUrl + url}`,
-      "log"
+      "log",
     );
 
     return new Promise(function (myResolve, myReject) {
@@ -530,15 +549,15 @@ class Assist {
           Assist.log(
             `An error occured when downloading JSON with filename ${filename} and except ${jsonData.substring(
               0,
-              10
-            )} from server: ${JSON.stringify(error)}`
+              10,
+            )} from server: ${JSON.stringify(error)}`,
           );
           myReject(
             new TaskResult(
               false,
               `An error occured when downloading the file`,
-              null
-            )
+              null,
+            ),
           );
         });
     });
@@ -555,7 +574,7 @@ class Assist {
       `Starting to login ${username} with source ${source} from server using url ${
         AppInfo.apiUrl + url
       }`,
-      "log"
+      "log",
     );
 
     return new Promise(function (myResolve, myReject) {
@@ -567,22 +586,22 @@ class Assist {
       })
         .then((response) => {
           Assist.log(
-            `Response has completed for logging login for ${username} from server`
+            `Response has completed for logging login for ${username} from server`,
           );
 
           if (typeof response.data == "string") {
             Assist.log(
               `Unable to process response for logging login ${username} from server: ${JSON.stringify(
-                response
-              )}`
+                response,
+              )}`,
             );
 
             myReject(
               new TaskResult(
                 false,
                 "Unable to process server response from server",
-                null
-              )
+                null,
+              ),
             );
           } else {
             if (response.data.succeeded) {
@@ -590,12 +609,12 @@ class Assist {
                 new TaskResult(
                   true,
                   `Successfully logged the login event for ${username}`,
-                  response.data.items
-                )
+                  response.data.items,
+                ),
               );
             } else {
               Assist.log(
-                `Unable to log login for ${username} from server: ${response.data.message}`
+                `Unable to log login for ${username} from server: ${response.data.message}`,
               );
               myReject(new TaskResult(false, response.data.message, null));
             }
@@ -604,15 +623,15 @@ class Assist {
         .catch((error) => {
           Assist.log(
             `An error occured when logging login for ${username} from server: ${JSON.stringify(
-              error
-            )}`
+              error,
+            )}`,
           );
           myReject(
             new TaskResult(
               false,
               `An error occured when logging login for ${username} from server`,
-              null
-            )
+              null,
+            ),
           );
         });
     });
@@ -629,7 +648,7 @@ class Assist {
     username: string,
     title: string,
     action: string,
-    description: string
+    description: string,
   ) {
     const url = "audit/update";
 
@@ -637,7 +656,7 @@ class Assist {
       `Starting to audit ${title} with from server using url ${
         AppInfo.apiUrl + url
       }`,
-      "log"
+      "log",
     );
 
     return new Promise(function (myResolve, myReject) {
@@ -659,16 +678,16 @@ class Assist {
           if (typeof response.data == "string") {
             Assist.log(
               `Unable to process response for audit ${title} from server: ${JSON.stringify(
-                response
-              )}`
+                response,
+              )}`,
             );
 
             myReject(
               new TaskResult(
                 false,
                 "Unable to process server response from server",
-                null
-              )
+                null,
+              ),
             );
           } else {
             if (response.data.succeeded) {
@@ -676,12 +695,12 @@ class Assist {
                 new TaskResult(
                   true,
                   `Successfully added the audit for ${title}`,
-                  response.data.items
-                )
+                  response.data.items,
+                ),
               );
             } else {
               Assist.log(
-                `Unable to audit ${title} from server: ${response.data.message}`
+                `Unable to audit ${title} from server: ${response.data.message}`,
               );
               myReject(new TaskResult(false, response.data.message, null));
             }
@@ -690,15 +709,15 @@ class Assist {
         .catch((error) => {
           Assist.log(
             `An error occured when auditing ${title} from server: ${JSON.stringify(
-              error
-            )}`
+              error,
+            )}`,
           );
           myReject(
             new TaskResult(
               false,
               `An error occured when auditting ${title} from server`,
-              null
-            )
+              null,
+            ),
           );
         });
     });
@@ -716,7 +735,7 @@ class Assist {
     title: string,
     action: string,
     description: string,
-    exception: string
+    exception: string,
   ) {
     const url = "log/update";
 
@@ -724,7 +743,7 @@ class Assist {
       `Starting to log ${title} with from server using url ${
         AppInfo.apiUrl + url
       }`,
-      "log"
+      "log",
     );
 
     return new Promise(function (myResolve, myReject) {
@@ -747,23 +766,23 @@ class Assist {
           if (typeof response.data == "string") {
             Assist.log(
               `Unable to process response for log ${title} from server: ${JSON.stringify(
-                response
-              )}`
+                response,
+              )}`,
             );
 
             myReject(
               new TaskResult(
                 false,
                 "Unable to process server response from server",
-                null
-              )
+                null,
+              ),
             );
           } else {
             if (response.data.succeeded) {
               myResolve(new TaskResult(true, "", response.data.items));
             } else {
               Assist.log(
-                `Unable to log ${title} from server: ${response.data.message}`
+                `Unable to log ${title} from server: ${response.data.message}`,
               );
               myReject(new TaskResult(false, response.data.message, null));
             }
@@ -772,15 +791,15 @@ class Assist {
         .catch((error) => {
           Assist.log(
             `An error occured when logging ${title} from server: ${JSON.stringify(
-              error
-            )}`
+              error,
+            )}`,
           );
           myReject(
             new TaskResult(
               false,
               `An error occured when logging ${title} from server`,
-              null
-            )
+              null,
+            ),
           );
         });
     });
@@ -798,14 +817,14 @@ class Assist {
         if (res === null) {
           Assist.showMessage(
             `The response from the server is invalid. Please try again`,
-            "error"
+            "error",
           );
         } else {
           if (res.Succeeded) {
             result = new TaskResult(
               true,
               "",
-              `${AppInfo.fileServer}${res.Data}`
+              `${AppInfo.fileServer}${res.Data}`,
             );
           } else {
             Assist.showMessage(res.Message, "error");
@@ -814,13 +833,13 @@ class Assist {
       } catch (x) {
         Assist.showMessage(
           `Unable to process response from server. Please try again`,
-          "error"
+          "error",
         );
       }
     } else {
       Assist.showMessage(
         `Unable to upload thumbnail image. Please try again`,
-        "error"
+        "error",
       );
     }
 

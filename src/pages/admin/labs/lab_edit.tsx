@@ -32,22 +32,22 @@ import HtmlEditor, {
 } from "devextreme-react/html-editor";
 import AppInfo from "../../../classes/app-info";
 
-const ExpenseEarningGroupEdit = () => {
+const AdminLabEdit = () => {
   //user
   const navigate = useNavigate();
   const { user } = useAuth();
   const { eId } = useParams(); // Destructure the parameter directly
 
   //posting
-  const [benchName, setBenchName] = useState(null);
-  const [benchDescription, setBenchDescription] = useState(null);
+  const [labName, setLabName] = useState<string | undefined>(undefined);
+  const [labDescription, setLabDescription] = useState<string | undefined>(undefined);
 
   //service
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
 
-  const pageConfig = new PageConfig("Bench", "", "", "Bench", "");
+  const pageConfig = new PageConfig("Lab", "", "", "Lab", "");
 
   pageConfig.Id = eId == undefined ? 0 : Number(eId);
 
@@ -57,7 +57,7 @@ const ExpenseEarningGroupEdit = () => {
       setLoading(true);
 
       setTimeout(() => {
-        Assist.loadData(pageConfig.Title, `lab-benches/id/${pageConfig.Id}`)
+        Assist.loadData(pageConfig.Title, `labs/id/${pageConfig.Id}`)
           .then((data) => {
             setLoading(false);
             updateVaues(data);
@@ -72,28 +72,28 @@ const ExpenseEarningGroupEdit = () => {
     }
   }, []);
 
-  const updateVaues = (data) => {
-    setBenchName(data.name);
-    setBenchDescription(data.description);
+  const updateVaues = (data: any) => {
+    setLabName(data.name);
+    setLabDescription(data.description);
   };
 
-  const onFormSubmit = (e) => {
+  const onFormSubmit = (e: React.FormEvent) => {
     setSaving(true);
 
     e.preventDefault();
 
     const postData = {
       user_id: user.userid,
-      name: benchName,
-      description: benchDescription,
+      name: labName,
+      description: labDescription,
     };
 
     console.log('pd', postData);
 
 
     const url = pageConfig.Id == 0
-          ? `lab-benches/create`
-          : `lab-benches/update/${pageConfig.Id}`;
+          ? `labs/create`
+          : `labs/update/${pageConfig.Id}`;
 
     setTimeout(() => {
       Assist.postPutData(
@@ -102,7 +102,7 @@ const ExpenseEarningGroupEdit = () => {
         postData,
         pageConfig.Id
       )
-        .then((data) => {
+        .then((data: any) => {
           setSaving(false);
           updateVaues(data);
 
@@ -113,7 +113,7 @@ const ExpenseEarningGroupEdit = () => {
 
           if (pageConfig.Id == 0) {
             //navigate
-            navigate(`/admin/benches/edit/${data.id}`);
+            navigate(`/admin/labes/edit/${data.id}`);
           }
         })
         .catch((message) => {
@@ -123,7 +123,7 @@ const ExpenseEarningGroupEdit = () => {
     },  Assist.DEV_DELAY);
   };
 
-  const toolbar = useMemo(() => {
+  const toolbar: any = useMemo(() => {
     return AppInfo.htmlToolbar;
   }, []);
 
@@ -153,15 +153,15 @@ const ExpenseEarningGroupEdit = () => {
             <form id="formMain" onSubmit={onFormSubmit}>
               <div className="form">
                 <div className="dx-fieldset">
-                  <div className="dx-fieldset-header">Name</div>
+                  <div className="dx-fieldset-header">Details</div>
                   <div className="dx-field">
-                    <div className="dx-field-label">Group Name</div>
+                    <div className="dx-field-label">Name</div>
                     <TextBox
                       className="dx-field-value"
                       placeholder="Name"
-                      value={benchName}
+                      value={labName}
                       disabled={error || saving}
-                      onValueChange={(text) => setBenchName(text)}
+                      onValueChange={(text) => setLabName(text)}
                     >
                       <Validator>
                         <RequiredRule message="Name is required" />
@@ -174,15 +174,12 @@ const ExpenseEarningGroupEdit = () => {
                   <div className="dx-field">
                     <HtmlEditor
                       height="525px"
-                      defaultValue={benchDescription}
-                      value={benchDescription}
+                      defaultValue={labDescription}
+                      value={labDescription}
                       toolbar={toolbar}
-                      onValueChanged={(e) => setBenchDescription(e.value)}
+                      onValueChanged={(e) => setLabDescription(e.value)}
                     >
                       <MediaResizing enabled={true} />
-                      <Validator>
-                        <RequiredRule message="Description is required" />
-                      </Validator>
                     </HtmlEditor>
                   </div>
                 </div>
@@ -217,4 +214,4 @@ const ExpenseEarningGroupEdit = () => {
   );
 };
 
-export default ExpenseEarningGroupEdit;
+export default AdminLabEdit;

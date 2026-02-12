@@ -11,6 +11,44 @@ const AppInfo = {
   yesNoList: ["No", "Yes"],
   paymethodsList: ["Bank Transfer", "Airtel", "MTN", "Zamtel"],
   memberPaymentMethodList: ["Mobile", "Bank"],
+  reagentTypes: [
+    {
+      name: "Liquid Bottle",
+      example: "1 bottle (e.g. 50 ml)",
+      definition:
+        "A liquid reagent contained in a bottle, typically used for storing and dispensing liquid chemicals.",
+    },
+    {
+      name: "Vial",
+      example: "1 vial",
+      definition:
+        "A small container, often made of glass or plastic, used to hold liquid or powdered reagents for laboratory use.",
+    },
+    {
+      name: "Cartridge",
+      example: "1 cartridge (e.g. 100 tests)",
+      definition:
+        "A pre-filled container that holds a specific amount of reagent, designed for easy insertion and use in compatible instruments.",
+    },
+    {
+      name: "Test strip pack",
+      example: "1 pack (e.g. 25 strips)",
+      definition:
+        "A collection of test strips in a sealed package, typically used for rapid diagnostic testing.",
+    },
+    {
+      name: "Single-use kit",
+      example: "1 kit",
+      definition:
+        "A pre-packaged set of reagents and materials designed for a single use in a specific test or procedure.",
+    },
+    {
+      name: "Bulk powder",
+      example: "1 container (e.g. 500 g)",
+      definition:
+        "Powdered reagent in large quantities, typically used in manufacturing or research settings.",
+    },
+  ],
   htmlToolbar: {
     items: [
       "undo",

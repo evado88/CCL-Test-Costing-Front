@@ -11,11 +11,17 @@ import {
   //Auth
   LoginPage,
   SignupPage,
-  AdminBenchesPage,
-  AdminBenchEditPage,
+  AdminLabsPage,
+  AdminLabEditPage,
   AdminUsersPage,
   AdminUserEditPage,
   AdminUserPage,
+  AdminInstrumentsPage,
+  AdminInstrumentEditPage,
+  AdminReagentsPage,
+  AdminReagentEditPage,
+  AdminTestsPage,
+  AdminTestEditPage,
 
 } from "./pages";
 import { BrowserRouter } from "react-router-dom";
@@ -44,10 +50,25 @@ function App() {
           <Route path="/" element={<MemberDashboardPage></MemberDashboardPage>} />
 
 
-          {/*expense and earnings*/}
-          <Route path="/admin/benches/list" element={<AdminBenchesPage/>} />
-          <Route path="/admin/benches/add" element={<AdminBenchEditPage/>} />
-          <Route path="/admin/benches/edit/:eId" element={<AdminBenchEditPage/>} />
+          {/* labs */}
+          <Route path="/admin/labs/list" element={<AdminLabsPage/>} />
+          <Route path="/admin/labs/add" element={<AdminLabEditPage/>} />
+          <Route path="/admin/labs/edit/:eId" element={<AdminLabEditPage/>} />
+
+          {/* instruments */}
+          <Route path="/admin/instruments/list" element={<AdminInstrumentsPage/>} />
+          <Route path="/admin/instruments/add" element={<AdminInstrumentEditPage/>} />
+          <Route path="/admin/instruments/edit/:eId" element={<AdminInstrumentEditPage/>} />
+
+          {/* reagents */}
+          <Route path="/admin/reagents/list" element={<AdminReagentsPage/>} />
+          <Route path="/admin/reagents/add" element={<AdminReagentEditPage/>} />
+          <Route path="/admin/reagents/edit/:eId" element={<AdminReagentEditPage/>} />
+
+          {/* tests */}
+          <Route path="/admin/tests/list" element={<AdminTestsPage/>} />
+          <Route path="/admin/tests/add" element={<AdminTestEditPage/>} />
+          <Route path="/admin/tests/edit/:eId" element={<AdminTestEditPage/>} />
     
           {/* Error */}   
           <Route path="*" element={<NotFoundPage></NotFoundPage>} />
