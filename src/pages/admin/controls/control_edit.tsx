@@ -56,7 +56,7 @@ const AdminReagentEdit = () => {
   const [reagentName, setReagentName] = useState<string | undefined>(undefined);
   const [reagentCost, setReagentCost] = useState<number | undefined>(undefined);
   const [reagentControl, setReagentControl] = useState<boolean | undefined>(
-    false,
+    true,
   );
   const [reagentGenericUnit, setReagentGenericUnit] = useState<
     string | undefined
@@ -91,7 +91,7 @@ const AdminReagentEdit = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
 
-  const pageConfig = new PageConfig("Reagent", "", "", "Reagent", "");
+  const pageConfig = new PageConfig("Control", "", "", "Control", "");
 
   pageConfig.Id = eId == undefined ? 0 : Number(eId);
 
@@ -192,7 +192,6 @@ const AdminReagentEdit = () => {
       generic_reagent_unit: reagentGenericUnit,
       quantity_per_gru: reagentQuantityPerGRU,
       tests_per_gru: reagentTestsPerGRU,
-      // lists
       lab_list: selectedLabs,
     };
 
@@ -334,11 +333,11 @@ const AdminReagentEdit = () => {
                   </div>
                   <div className="dx-field">
                     <div className="dx-field-label">
-                      Generic Reagent Unit (GRU)
+                      Generic Control Unit (GRU)
                     </div>
                     <SelectBox
                       className="dx-field-value"
-                      placeholder="Generic Reagent Unit"
+                      placeholder="Generic Control Unit"
                       dataSource={AppInfo.reagentTypes}
                       value={reagentGenericUnit}
                       itemTemplate={(item) => `${item.name} - ${item.example}`}
@@ -348,12 +347,12 @@ const AdminReagentEdit = () => {
                       onValueChange={(text) => setReagentGenericUnit(text)}
                     >
                       <Validator>
-                        <RequiredRule message="Generic Reagent Unit is required" />
+                        <RequiredRule message="Generic Control Unit is required" />
                       </Validator>
                     </SelectBox>
                     <div className="dx-field-value-static">
                       <i>
-                        Generic Reagent Unit - The smallest unit that must be
+                        Generic Control Unit - The smallest unit that must be
                         opened and that expires after E days
                       </i>
                     </div>
@@ -529,7 +528,7 @@ const AdminReagentEdit = () => {
                   </div>
                   <div className="dx-field">
                     <div className="dx-field-label">
-                      Reagent units consumed <b>(RUC)</b> ={" "}
+                      Control units consumed <b>(RUC)</b> ={" "}
                       <b>
                         {" "}
                         (A / TU) = ({reagentSimActualTest} /

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Titlebar } from "../../../components/titlebar";
 import { Card } from "../../../components/card";
 import { Row } from "../../../components/row";
@@ -31,6 +31,21 @@ import HtmlEditor, {
   MediaResizing,
 } from "devextreme-react/html-editor";
 import AppInfo from "../../../classes/app-info";
+import DropDownBox from "devextreme-react/drop-down-box";
+import DataGrid, {
+  Column,
+  Selection,
+  Pager,
+  Paging,
+  Summary,
+  GroupItem,
+  TotalItem,
+  Editing,
+  Scrolling,
+  FilterRow,
+} from "devextreme-react/data-grid";
+import type { DropDownBoxTypes } from "devextreme-react/drop-down-box";
+import type { DataGridTypes } from "devextreme-react/data-grid";
 
 const AdminInstrumentEdit = () => {
   //user
@@ -42,6 +57,9 @@ const AdminInstrumentEdit = () => {
   const [instrumentName, setInstrumentName] = useState<string | undefined>(
     undefined,
   );
+  const [instrumentSerialNo, setInstrumentSerialNo] = useState<
+    string | undefined
+  >(undefined);
   const [instrumentCost, setInstrumentCost] = useState<number | undefined>(
     undefined,
   );
@@ -50,10 +68,26 @@ const AdminInstrumentEdit = () => {
   >(undefined);
   const [instrumentAnnualMaintenanceCost, setInstrumentAnnualMaintenanceCost] =
     useState<number | undefined>(undefined);
+
+  // calibration
+  const [instrumentCalibrationCycle, setInstrumentCalibrationCycle] = useState<
+    number | undefined
+  >(undefined);
+
+  const [instrumentCalibrationKitCost, setInstrumentCalibrationKitCost] =
+    useState<number | undefined>(undefined);
+
+  const [
+    instrumentCalibrationServiceCost,
+    setInstrumentCalibrationServiceCost,
+  ] = useState<number | undefined>(undefined);
+
   const [instrumentDescription, setInstrumentDescription] = useState<
     string | undefined
   >(undefined);
 
+  const [selectedLabIds, setSelectedLabIds] = useState<number[]>([]);
+  const [labsData, setLabsData] = useState<any[]>([]);
   //service
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -72,7 +106,8 @@ const AdminInstrumentEdit = () => {
         Assist.loadData(pageConfig.Title, `instruments/id/${pageConfig.Id}`)
           .then((data: any) => {
             setLoading(false);
-            updateVaues(data);
+            setLabsData(data.labs);
+            updateVaues(data.instrument);
             setError(false);
           })
           .catch((message) => {
@@ -100,32 +135,59 @@ const AdminInstrumentEdit = () => {
     }
   };
 
-  //Calculate total annual instrument cost
-  const getTotalAnnualInstrumentCost = () => {
-    if (
-      instrumentAmortization != undefined &&
-      instrumentAmortization > 0 &&
-      instrumentCost != undefined &&
-      instrumentCost > 0
-    ) {
-      const annualCost = instrumentCost / instrumentAmortization;
-
-      if (instrumentAnnualMaintenanceCost != undefined) {
-        return annualCost + instrumentAnnualMaintenanceCost;
-      } else {
-        return annualCost;
-      }
+  //Calculate instrument maintenance cost
+  const getAnnualMaintenanceCost = () => {
+    if (instrumentAnnualMaintenanceCost != undefined) {
+      return instrumentAnnualMaintenanceCost;
     } else {
       return 0;
     }
   };
 
+  //calibration cost
+  const getInstrumentCalibrationCost = () => {
+    if (
+      instrumentCalibrationCycle != undefined &&
+      instrumentCalibrationKitCost != undefined &&
+      instrumentCalibrationServiceCost != undefined
+    ) {
+      const calibrationCost =
+        (instrumentCalibrationKitCost + instrumentCalibrationServiceCost) *
+        instrumentCalibrationCycle;
+
+      return calibrationCost;
+    } else {
+      return 0;
+    }
+  };
+
+  //Calculate total annual instrument cost
+  const getTotalAnnualInstrumentCost = () => {
+    const totalCost =
+      getAnnualInstrumentCost() +
+      getAnnualMaintenanceCost() +
+      getInstrumentCalibrationCost();
+
+    return totalCost;
+  };
+
   const updateVaues = (data: any) => {
     setInstrumentName(data.name);
+    setInstrumentSerialNo(data.serial_no);
     setInstrumentCost(data.cost);
     setInstrumentAmortization(data.amortization);
     setInstrumentAnnualMaintenanceCost(data.maintenance_cost);
     setInstrumentDescription(data.description);
+
+    setInstrumentCalibrationCycle(data.calibration_cycle);
+    setInstrumentCalibrationKitCost(data.calibration_kit_cost);
+    setInstrumentCalibrationServiceCost(data.calibration_service_cost);
+
+    //update selected ids
+    if (data.lab_list) {
+      const ids = data.lab_list.map((l: any) => l.id);
+      setSelectedLabIds(ids);
+    }
   };
 
   const onFormSubmit = (e: React.FormEvent) => {
@@ -133,15 +195,30 @@ const AdminInstrumentEdit = () => {
 
     e.preventDefault();
 
+    const selectedLabs: any[] = labsData.filter((value: any) =>
+      selectedLabIds.includes(value.id),
+    );
+
     const postData = {
+      // user
       user_id: user.userid,
+      // details
       name: instrumentName,
+      serial_no: instrumentSerialNo,
+      description: instrumentDescription,
+      // costs
       cost: instrumentCost,
       amortization: instrumentAmortization,
       maintenance_cost: instrumentAnnualMaintenanceCost,
       annual_cost: getAnnualInstrumentCost(),
       total_cost: getTotalAnnualInstrumentCost(),
-      description: instrumentDescription,
+      // calibration
+      calibration_cycle: instrumentCalibrationCycle,
+      calibration_kit_cost: instrumentCalibrationKitCost,
+      calibration_service_cost: instrumentCalibrationServiceCost,
+      calibration_annual_cost: getInstrumentCalibrationCost(),
+      // lists
+      lab_list: selectedLabs,
     };
 
     const url =
@@ -175,6 +252,44 @@ const AdminInstrumentEdit = () => {
   const toolbar: any = useMemo(() => {
     return AppInfo.htmlToolbar;
   }, []);
+
+  const calibrationFrequencyData = [
+    { name: "Monthly", cycle: 12 },
+    { name: "Quarterly", cycle: 4 },
+    { name: "Semi-Annually", cycle: 2 },
+    { name: "Annually", cycle: 1 },
+  ];
+
+  const syncDataGridSelection = useCallback(
+    (e: DropDownBoxTypes.ValueChangedEvent): void => {
+      setSelectedLabIds(e.value || []);
+    },
+    [],
+  );
+
+  const dataGridOnSelectionChanged = useCallback(
+    (e: DataGridTypes.SelectionChangedEvent): void => {
+      setSelectedLabIds((e.selectedRowKeys.length && e.selectedRowKeys) || []);
+    },
+    [],
+  );
+
+  const dataGridRender = () => (
+    <DataGrid
+      height={345}
+      keyExpr={"id"}
+      dataSource={labsData}
+      columns={["id", "name"]}
+      hoverStateEnabled={true}
+      selectedRowKeys={selectedLabIds}
+      onSelectionChanged={dataGridOnSelectionChanged}
+    >
+      <Selection mode="multiple" />
+      <Scrolling mode="virtual" />
+      <Paging enabled={true} pageSize={10} />
+      <FilterRow visible={true} />
+    </DataGrid>
+  );
 
   return (
     <div id="pageRoot" className="page-content">
@@ -218,6 +333,20 @@ const AdminInstrumentEdit = () => {
                     </TextBox>
                   </div>
                   <div className="dx-field">
+                    <div className="dx-field-label">Serial Number</div>
+                    <TextBox
+                      className="dx-field-value"
+                      placeholder="Name"
+                      value={instrumentSerialNo}
+                      disabled={error || saving}
+                      onValueChange={(text) => setInstrumentSerialNo(text)}
+                    >
+                      <Validator>
+                        <RequiredRule message="Serial number is required" />
+                      </Validator>
+                    </TextBox>
+                  </div>
+                  <div className="dx-field">
                     <div className="dx-field-label">Cost</div>
                     <NumberBox
                       className="dx-field-value"
@@ -230,6 +359,22 @@ const AdminInstrumentEdit = () => {
                         <RequiredRule message="Cost is required" />
                       </Validator>
                     </NumberBox>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">Labs</div>
+                    <div className="dx-field-value">
+                      <DropDownBox
+                        value={selectedLabIds}
+                        valueExpr={"id"}
+                        deferRendering={false}
+                        displayExpr={"name"}
+                        placeholder="Select labs.."
+                        showClearButton={true}
+                        dataSource={labsData}
+                        onValueChanged={syncDataGridSelection}
+                        contentRender={dataGridRender}
+                      />
+                    </div>
                   </div>
                   <div className="dx-field">
                     <div className="dx-field-label">Amortization</div>
@@ -253,6 +398,9 @@ const AdminInstrumentEdit = () => {
                       </strong>
                     </div>
                   </div>
+                </div>
+                <div className="dx-fieldset">
+                  <div className="dx-fieldset-header">Maintenance</div>
                   <div className="dx-field">
                     <div className="dx-field-label">
                       Annual Maintenance Cost
@@ -271,6 +419,80 @@ const AdminInstrumentEdit = () => {
                       </Validator>
                     </NumberBox>
                   </div>
+                </div>
+                <div className="dx-fieldset">
+                  <div className="dx-fieldset-header">Calibration</div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">Calibration Frequency</div>
+                    <SelectBox
+                      className="dx-field-value"
+                      placeholder="Calibration Frequency"
+                      dataSource={calibrationFrequencyData}
+                      valueExpr={"cycle"}
+                      displayExpr={"name"}
+                      value={instrumentCalibrationCycle}
+                      disabled={error || saving}
+                      onValueChange={(text) =>
+                        setInstrumentCalibrationCycle(text)
+                      }
+                    >
+                      <Validator>
+                        <RequiredRule message="Calibration cycle is required" />
+                      </Validator>
+                    </SelectBox>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">Calibration Kit Cost</div>
+                    <NumberBox
+                      className="dx-field-value"
+                      placeholder="Calibration Cost"
+                      value={instrumentCalibrationKitCost}
+                      disabled={error || saving}
+                      onValueChange={(text) =>
+                        setInstrumentCalibrationKitCost(text)
+                      }
+                    >
+                      <Validator>
+                        <RequiredRule message="Calibration kit cost is required" />
+                      </Validator>
+                    </NumberBox>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">
+                      Calibration Service Cost
+                    </div>
+                    <NumberBox
+                      className="dx-field-value"
+                      placeholder="Calibration Service Cost"
+                      value={instrumentCalibrationServiceCost}
+                      disabled={error || saving}
+                      onValueChange={(text) =>
+                        setInstrumentCalibrationServiceCost(text)
+                      }
+                    >
+                      <Validator>
+                        <RequiredRule message="Calibration service cost is required" />
+                      </Validator>
+                    </NumberBox>
+                  </div>
+                  <div className="dx-field">
+                    <div className="dx-field-label">
+                      Annual Calibration Cost
+                    </div>
+                    <div className="dx-field-value-static">
+                      <strong>
+                        {Assist.formatCurrencyUSD(
+                          getInstrumentCalibrationCost(),
+                        )}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+                <div className="dx-fieldset">
+                  <div className="dx-fieldset-header">
+                    Annual Instrument Cost
+                  </div>
+
                   <div className="dx-field">
                     <div className="dx-field-label">
                       Total Annual Instrument Cost
@@ -284,12 +506,11 @@ const AdminInstrumentEdit = () => {
                     </div>
                   </div>
                 </div>
-
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">Description</div>
                   <div className="dx-field">
                     <HtmlEditor
-                      height="525px"
+                      height="325px"
                       defaultValue={instrumentDescription}
                       value={instrumentDescription}
                       toolbar={toolbar}

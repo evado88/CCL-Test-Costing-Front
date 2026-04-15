@@ -288,10 +288,34 @@ class Assist {
     );
   }
 
-  static async downloadExcel(name: string, dataArray: any) {
+  static async downloadExcel(name: string, dataArray: any, columnList: any) {
     const endPoint = "data/export-excel";
-    //const jsonArray = JSON.stringify(dataArray);
-    const postData = { filename: name, jsonArray: dataArray };
+
+    const allColumns = Array.from(columnList);
+
+    const columns = allColumns.filter(
+      (col: any) =>
+        col.type !== "buttons" &&
+        col.type !== "selection" &&
+        col.type !== "adaptive",
+    );
+
+    const dataColumns: any[] = columns.map((col: any) => {
+      return {
+        caption: col.caption,
+        dataField: col.dataField,
+        dataType: col.dataType,
+      };
+    });
+
+    //attempt to get details
+    const authtoken = localStorage.getItem("token");
+
+    const postData = {
+      filename: name,
+      jsonArray: dataArray,
+      columns: dataColumns,
+    };
 
     axios({
       method: "post",

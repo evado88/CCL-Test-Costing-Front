@@ -80,6 +80,38 @@ const AdminTestEdit = () => {
   const [reagentData, setReagentData] = useState<any[]>([]);
   const [instrumentData, setInstrumentData] = useState<any[]>([]);
 
+  // labor per sample
+  const [avgHourWageAnalysisStaff, setAvgHourWageAnalysisStaff] = useState<
+    number | undefined
+  >(undefined);
+  const [setupMinutes, setSetupMinutes] = useState<number | undefined>(
+    undefined,
+  );
+  const [analysisMinutes, setAnalysisMinutes] = useState<number | undefined>(
+    undefined,
+  );
+  const [resultReviewMinutes, setResultReviewMinutes] = useState<
+    number | undefined
+  >(undefined);
+  const [resultDocumentationMinutes, setResultDocumentationMinutes] = useState<
+    number | undefined
+  >(undefined);
+  const [retention, setRetention] = useState<number | undefined>(undefined);
+
+  //labor per result
+  const [avgHourWageReportStaff, setAvgHourWageReportStaff] = useState<
+    number | undefined
+  >(undefined);
+  const [resultEntryMinutes, setResultEntryMinutes] = useState<
+    number | undefined
+  >(undefined);
+  const [reportPreparationMinutes, setReportPreparationMinutes] = useState<
+    number | undefined
+  >(undefined);
+  const [reportDistributionMinutes, setReportDistributionMinutes] = useState<
+    number | undefined
+  >(undefined);
+
   //service
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -153,10 +185,37 @@ const AdminTestEdit = () => {
   const testVolumePerRun =
     annualRuns == 0 ? 0 : anticipatedAnnualTestVolume / annualRuns;
 
+  const sampleTotalLaborMinutesPerYear = () => {
+    return (
+      (setupMinutes ?? 0) +
+      (analysisMinutes ?? 0) +
+      (resultReviewMinutes ?? 0) +
+      (resultDocumentationMinutes ?? 0) +
+      (retention ?? 0)
+    );
+  };
+  const sampleTotalLaborPerYear = () => {
+    return sampleTotalLaborMinutesPerYear() * anticipatedAnnualTestVolume;
+  };
+
+  const resultTotalLaborMinutesPerYear = () => {
+    return (
+      (resultEntryMinutes ?? 0) +
+      (reportPreparationMinutes ?? 0) +
+      (reportDistributionMinutes ?? 0)
+    );
+  };
+  const resultTotalLaborPerYear = () => {
+    return (
+      (resultTotalLaborMinutesPerYear() / 60) * (avgHourWageReportStaff ?? 0)
+    );
+  };
+
   const updateVaues = (data: any) => {
     // details
     setTestName(data.name);
     setTestDescription(data.description);
+    setTestLab(data.lab_id);
 
     // annual volumes
     setTestNHIMA(data.annual_nhima);
@@ -172,6 +231,22 @@ const AdminTestEdit = () => {
     //runs
     setTestRunsDayPerWeek(data.runs_day_week);
     setTestRunsShiftPerWeek(data.runs_shift_day);
+
+
+    // labor per sample
+    setAvgHourWageAnalysisStaff(data.avg_hr_wage_analysis);
+    setSetupMinutes(data.setup_min);
+    setAnalysisMinutes(data.analysis_min);
+    setResultReviewMinutes(data.result_review_min);
+    setResultDocumentationMinutes(data.result_doc_min); 
+    setRetention(data.retention);
+    // labor per result
+    setAvgHourWageReportStaff(data.avg_hr_wage_report);
+    setResultEntryMinutes(data.result_entry_min);
+    setReportPreparationMinutes(data.report_preparation_min);
+    setReportDistributionMinutes(data.report_distribution_min);
+    
+
   };
 
   const loadLists = (data: any) => {
@@ -286,12 +361,31 @@ const AdminTestEdit = () => {
       runs_annual: annualRuns,
       runs_average_volume: testVolumePerRun,
 
+      // labor per sample
+      avg_hr_wage_analysis: avgHourWageAnalysisStaff,
+      setup_min: setupMinutes,
+      analysis_min: analysisMinutes,
+      result_review_min: resultReviewMinutes,
+      result_doc_min: resultDocumentationMinutes,
+      retention: retention,
+      total_labor_analysis_min: sampleTotalLaborMinutesPerYear(),
+      total_labor_analysis_year: sampleTotalLaborPerYear(),
+      // labor per result
+      avg_hr_wage_report: avgHourWageReportStaff,
+      result_entry_min: resultEntryMinutes,
+      report_preparation_min: reportPreparationMinutes,
+      report_distribution_min: reportDistributionMinutes,
+      total_labor_result_min: resultTotalLaborMinutesPerYear(),
+      total_labor_result_year: resultTotalLaborPerYear(),
+
       //lists
       reagent_list: reagentData.filter(
         (item) => item.test_actual && item.test_actual > 0,
       ),
       instrument_list: instrumentData.filter((item) => item.is_applicable),
     };
+
+    console.log("Form submit called", postData);
 
     const url =
       pageConfig.Id == 0 ? `tests/create` : `tests/update/${pageConfig.Id}`;
@@ -581,6 +675,7 @@ const AdminTestEdit = () => {
                     </div>
                   </div>
                 </div>
+
                 <div className="dx-fieldset">
                   <div className="dx-fieldset-header">Description</div>
                   <div className="dx-field">
@@ -622,7 +717,191 @@ const AdminTestEdit = () => {
           </Card>
         </Col>
         <Col sz={12} sm={12} lg={8}>
-          <Card title="Reagents & Instruments" showHeader={true}>
+          <Card title="Labor, Reagents & Instruments" showHeader={true}>
+            <div className="dx-fieldset">
+              <div className="dx-fieldset-header">Labor Per Sample</div>
+
+              <div className="dx-field">
+                <div className="dx-field-label">
+                  Average Hourly wage for staff performing analysis
+                </div>
+                <NumberBox
+                  className="dx-field-value"
+                  placeholder="Average Hourly Wage for Staff Performing Analysis"
+                  value={avgHourWageAnalysisStaff}
+                  disabled={error || saving}
+                  onValueChange={(text) => setAvgHourWageAnalysisStaff(text)}
+                >
+                  <Validator>
+                    <RequiredRule message="Average Hourly Wage for Staff Performing Analysis is required" />
+                  </Validator>
+                </NumberBox>
+              </div>
+              <div className="dx-field">
+                <div className="dx-field-label">Set up (hands on min)</div>
+                <NumberBox
+                  className="dx-field-value"
+                  placeholder="Set up (hands on min)"
+                  value={setupMinutes}
+                  disabled={error || saving}
+                  onValueChange={(text) => setSetupMinutes(text)}
+                >
+                  <Validator>
+                    <RequiredRule message="Set up (hands on min) is required" />
+                  </Validator>
+                </NumberBox>
+              </div>
+              <div className="dx-field">
+                <div className="dx-field-label">Analysis (hands on min)</div>
+                <NumberBox
+                  className="dx-field-value"
+                  placeholder="Analysis (hands on min)"
+                  value={analysisMinutes}
+                  disabled={error || saving}
+                  onValueChange={(text) => setAnalysisMinutes(text)}
+                >
+                  <Validator>
+                    <RequiredRule message="Analysis (hands on min) is required" />
+                  </Validator>
+                </NumberBox>
+              </div>
+              <div className="dx-field">
+                <div className="dx-field-label">Result review (min)</div>
+                <NumberBox
+                  className="dx-field-value"
+                  placeholder="Result review (min)"
+                  value={resultReviewMinutes}
+                  disabled={error || saving}
+                  onValueChange={(text) => setResultReviewMinutes(text)}
+                >
+                  <Validator>
+                    <RequiredRule message="Result review (min) is required" />
+                  </Validator>
+                </NumberBox>
+              </div>
+              <div className="dx-field">
+                <div className="dx-field-label">Result documentation (min)</div>
+                <NumberBox
+                  className="dx-field-value"
+                  placeholder="Result documentation (min)"
+                  value={resultDocumentationMinutes}
+                  disabled={error || saving}
+                  onValueChange={(text) => setResultDocumentationMinutes(text)}
+                >
+                  <Validator>
+                    <RequiredRule message="Result documentation (min) is required" />
+                  </Validator>
+                </NumberBox>
+              </div>
+              <div className="dx-field">
+                <div className="dx-field-label">Retention</div>
+                <NumberBox
+                  className="dx-field-value"
+                  placeholder="Retention (min)"
+                  value={retention}
+                  disabled={error || saving}
+                  onValueChange={(text) => setRetention(text)}
+                >
+                  <Validator>
+                    <RequiredRule message="Retention is required" />
+                  </Validator>
+                </NumberBox>
+              </div>
+              <div className="dx-field">
+                <div className="dx-field-label">Total labor (min)</div>
+                <div className="dx-field-value-static">
+                  <strong>
+                    {Assist.formatNumber(sampleTotalLaborMinutesPerYear())}
+                  </strong>
+                </div>
+              </div>
+              <div className="dx-field">
+                <div className="dx-field-label">Total labor per year</div>
+                <div className="dx-field-value-static">
+                  <strong>
+                    {Assist.formatNumber(sampleTotalLaborPerYear())}
+                  </strong>
+                </div>
+              </div>
+            </div>
+            <div className="dx-fieldset">
+              <div className="dx-fieldset-header">Labor Per result</div>
+
+              <div className="dx-field">
+                <div className="dx-field-label">
+                  Average Hourly wage for staff producing reports
+                </div>
+                <NumberBox
+                  className="dx-field-value"
+                  placeholder="Average Hourly Wage for Staff Producing Reports"
+                  value={avgHourWageReportStaff}
+                  disabled={error || saving}
+                  onValueChange={(text) => setAvgHourWageReportStaff(text)}
+                >
+                  <Validator>
+                    <RequiredRule message="Average Hourly Wage for Staff Producing Reports is required" />
+                  </Validator>
+                </NumberBox>
+              </div>
+              <div className="dx-field">
+                <div className="dx-field-label">Result entry (min)</div>
+                <NumberBox
+                  className="dx-field-value"
+                  placeholder="Result entry (min)"
+                  value={resultEntryMinutes}
+                  disabled={error || saving}
+                  onValueChange={(text) => setResultEntryMinutes(text)}
+                >
+                  <Validator>
+                    <RequiredRule message="Result entry (min) is required" />
+                  </Validator>
+                </NumberBox>
+              </div>
+              <div className="dx-field">
+                <div className="dx-field-label">Report preparation (min)</div>
+                <NumberBox
+                  className="dx-field-value"
+                  placeholder="Report preparation (min)"
+                  value={reportPreparationMinutes}
+                  disabled={error || saving}
+                  onValueChange={(text) => setReportPreparationMinutes(text)}
+                >
+                  <Validator>
+                    <RequiredRule message="Report preparation (min) is required" />
+                  </Validator>
+                </NumberBox>
+              </div>
+              <div className="dx-field">
+                <div className="dx-field-label">Report distribution (min)</div>
+                <NumberBox
+                  className="dx-field-value"
+                  placeholder="Report distribution (min)"
+                  value={reportDistributionMinutes}
+                  disabled={error || saving}
+                  onValueChange={(text) => setReportDistributionMinutes(text)}
+                >
+                  <Validator>
+                    <RequiredRule message="Report distribution (min) is required" />
+                  </Validator>
+                </NumberBox>
+              </div>
+              <div className="dx-field">
+                <div className="dx-field-label">Total labor (min)</div>
+                <div className="dx-field-value-static">
+                  <strong>
+                    {Assist.formatNumber(resultTotalLaborMinutesPerYear())}
+                  </strong>
+                </div>
+              </div>
+              <div className="dx-field">
+                <div className="dx-field-label">Total labor cost/test</div>
+                <div className="dx-field-value-static">
+                  <strong>
+                    {Assist.formatNumber(resultTotalLaborPerYear())}
+                  </strong>
+                </div>
+              </div>
+            </div>
             <div className="dx-fieldset">
               <div className="dx-fieldset-header">Instruments</div>
               <div className="dx-field">
@@ -722,7 +1001,7 @@ const AdminTestEdit = () => {
                   columnAutoWidth={true}
                   columnHidingEnabled={true}
                   onRowUpdated={(e) => {
-                    const reagentSimDaysInPeriod = 30;
+                    const reagentSimDaysInPeriod = 365;
                     const reagentSimActualTest = e.data.test_actual;
                     const reagentExpiryPeriod = e.data.expiry_period;
                     const reagentTestsPerGRU = e.data.tests_per_gru;

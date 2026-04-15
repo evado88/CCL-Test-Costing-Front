@@ -27,7 +27,7 @@ const AdminReagents = () => {
 
   const pageConfig = new PageConfig(
     "Reagents",
-    "reagents/list",
+    "reagents/list/0",
     "",
     "Reagent",
     "",

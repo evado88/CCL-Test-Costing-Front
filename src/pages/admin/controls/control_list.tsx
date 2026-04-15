@@ -19,13 +19,19 @@ import Assist from "../../../classes/assist";
 import PageConfig from "../../../classes/page-config";
 import { useNavigate } from "react-router-dom";
 
-const AdminTests = () => {
+const AdminReagents = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [loadingText, setLoadingText] = useState("Loading data...");
   const [loading, setLoading] = useState(true);
 
-  const pageConfig = new PageConfig("Tests", "tests/list", "", "Test", "");
+  const pageConfig = new PageConfig(
+    "Consumables",
+    "reagents/list/1",
+    "",
+    "Consumable",
+    "",
+  );
 
   useEffect(() => {
     setLoading(true);
@@ -51,7 +57,7 @@ const AdminTests = () => {
     () => ({
       icon: "add",
       text: "Refresh",
-      onClick: () => navigate("/admin/tests/add"),
+      onClick: () => navigate("/admin/controls/add"),
     }),
     [],
   );
@@ -102,95 +108,48 @@ const AdminTests = () => {
                 />
                 <Item name="columnChooserButton" />
               </Toolbar>
-              <Column dataField="id" caption="ID" hidingPriority={17}></Column>
+              <Column dataField="id" caption="ID" hidingPriority={4}></Column>
               <Column
                 dataField="name"
                 caption="Name"
-                hidingPriority={16}
+                hidingPriority={5}
                 sortOrder="asc"
                 cellRender={(e) => {
                   return (
-                    <a href={`/admin/tests/edit/${e.data.id}`}>{e.text}</a>
+                    <a href={`/admin/controls/edit/${e.data.id}`}>{e.text}</a>
                   );
                 }}
               ></Column>
               <Column
-                dataField="annual_nhima"
-                caption="Annual NHIMA"
-                format={",##0.###"}
-                hidingPriority={15}
-              ></Column>
-              <Column
-                dataField="annual_credit"
-                caption="Annual Credit"
-                format={",##0.###"}
-                hidingPriority={14}
-              ></Column>
-              <Column
-                dataField="annual_research"
-                caption="Annual Research"
-                format={",##0.###"}
-                hidingPriority={13}
-              ></Column>
-              <Column
-                dataField="annual_walkins"
-                caption="Annual Walkins"
-                format={",##0.###"}
-                hidingPriority={12}
-              ></Column>
-              <Column
-                dataField="annual_shift"
-                caption="Annual Shift"
-                format={",##0.###"}
-                hidingPriority={11}
-              ></Column>
-              <Column
-                dataField="annual_total"
-                caption="Annual Total"
-                format={",##0.###"}
-                hidingPriority={10}
-              ></Column>
-              <Column
-                dataField="sites_no"
-                caption="Sites No"
-                format={",##0.###"}
-                hidingPriority={9}
-              ></Column>
-              <Column
-                dataField="staff_no"
-                caption="Staff No"
-                format={",##0.###"}
-                hidingPriority={8}
-              ></Column>
-              <Column
-                dataField="runs_day_week"
-                caption="Days Per Week"
-                format={",##0.###"}
-                hidingPriority={7}
-              ></Column>
-              <Column
-                dataField="runs_shift_day"
-                caption="Shifts Per Day"
-                format={",##0.###"}
-                hidingPriority={6}
-              ></Column>
-              <Column
-                dataField="runs_annual"
-                caption="Annual Runs"
-                format={",##0.###"}
-                hidingPriority={5}
-              ></Column>
-              <Column
-                dataField="runs_average_volume"
-                caption="Volume Per Run"
-                format={",##0.###"}
+                dataField="cost"
+                caption="Cost"
                 hidingPriority={4}
+              ></Column>
+              <Column
+                dataField="expiry_period"
+                caption="Expiry Period"
+                hidingPriority={3}
+              ></Column>
+              <Column
+                dataField="generic_reagent_unit"
+                caption="Generic Reagent Unit (GRU)"
+                hidingPriority={3}
+              ></Column>
+              <Column
+                dataField="quantity_per_gru"
+                caption="Quantity Per (GRU)"
+                hidingPriority={3}
+              ></Column>
+              <Column
+                dataField="tests_per_gru"
+                caption="Tests Per (GRU)"
+                hidingPriority={3}
               ></Column>
               <Column
                 dataField="created_by"
                 caption="User"
                 minWidth={120}
-                hidingPriority={3}
+                hidingPriority={2}
               ></Column>
               <Column
                 dataField="created_at"
@@ -207,4 +166,4 @@ const AdminTests = () => {
   );
 };
 
-export default AdminTests;
+export default AdminReagents;

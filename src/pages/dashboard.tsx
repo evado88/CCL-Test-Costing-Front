@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Ticker } from "../components/ticker.jsx";
 import { Titlebar } from "../components/titlebar.js";
 import { Card } from "../components/card.js";
@@ -28,13 +28,18 @@ import DataGrid, {
   Toolbar,
   Item,
   MasterDetail,
+  Summary,
+  TotalItem,
 } from "devextreme-react/data-grid";
 import { useNavigate } from "react-router-dom";
 
 const MyDashboard = () => {
   //user
+  const gridMainRef = useRef<any>(null);
+  const gridReagentsRef = useRef<any>(null);
+  const gridInstrumentsRef = useRef<any>(null);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [testsNo, setTestsNo] = useState<number | undefined>(undefined);
   const [instrumentsNo, setInstrumentsNo] = useState<number | undefined>(
@@ -148,6 +153,14 @@ const MyDashboard = () => {
             format={",##0.###"}
             allowEditing={false}
           ></Column>
+          <Summary>
+            <TotalItem
+              column="cost_per_test"
+              summaryType="sum"
+              valueFormat={",##0.###"}
+              displayFormat="{0}"
+            />
+          </Summary>
         </DataGrid>
       );
     }
@@ -194,6 +207,14 @@ const MyDashboard = () => {
             format={",##0.###"}
             allowEditing={false}
           ></Column>
+          <Summary>
+            <TotalItem
+              column="annual_cost"
+              summaryType="sum"
+              valueFormat={",##0.###"}
+              displayFormat="{0}"
+            />
+          </Summary>
         </DataGrid>
       );
     }
@@ -217,7 +238,12 @@ const MyDashboard = () => {
           }
         />
 
-        <Column dataField="cost" caption="Component Cost" dataType="number" />
+        <Column
+          dataField="cost"
+          caption="Component Cost"
+          dataType="number"
+          format={",##0.###"}
+        />
 
         <MasterDetail enabled={true} component={renderComponentItems} />
       </DataGrid>
@@ -291,10 +317,13 @@ const MyDashboard = () => {
         <Col sz={12} sm={12} lg={12}>
           <Card title={"Summary"} showHeader={true}>
             <DataGrid
+              ref={gridMainRef}
               className={"dx-card wide-card"}
               dataSource={data}
               keyExpr={"name"}
-              noDataText={`No summary available yet`}
+              noDataText={
+                loading ? "Loading Dashboard" : `No summary available yet`
+              }
               showBorders={false}
               focusedRowEnabled={false}
               defaultFocusedRowIndex={0}
@@ -309,12 +338,50 @@ const MyDashboard = () => {
                 allowAdding={false}
               />
               <Pager showPageSizeSelector={true} showInfo={true} />
+              <Toolbar>
+                <Item name="columnChooserButton" />
+                <Item
+                  location="after"
+                  locateInMenu="auto"
+                  showText="always"
+                  widget="dxButton"
+                  options={{
+                    icon: "save",
+                    text: " Excel Export",
+                    onClick: () =>
+                      Assist.downloadExcel(
+                        pageConfig.Title,
+                        data.tests,
+                        gridMainRef.current?.instance.getVisibleColumns(),
+                      ),
+                  }}
+                />
+              </Toolbar>
               <Column
                 dataField="name"
                 caption="Name"
                 hidingPriority={2}
               ></Column>
+
               <Column dataField="lab" caption="Lab" hidingPriority={2}></Column>
+              <Column
+                dataField="annual_total"
+                caption="Annual Volume"
+                format={",##0.###"}
+                hidingPriority={2}
+              ></Column>
+              <Column
+                dataField="total_labor_analysis_year"
+                caption="Total Labor Per Year"
+                format={",##0.###"}
+                hidingPriority={2}
+              ></Column>
+              <Column
+                dataField="total_labor_result_year"
+                caption="Total Labor Cost Per Test"
+                format={",##0.###"}
+                hidingPriority={2}
+              ></Column>
               <Column
                 dataField="total_cost"
                 caption="Total Cost"

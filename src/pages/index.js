@@ -24,6 +24,10 @@ export { default as AdminTestEditPage } from './admin/tests/test_edit'
 export { default as AdminReagentsPage } from './admin/reagents/reagent_list'
 export { default as AdminReagentEditPage } from './admin/reagents/reagent_edit'
 
+//controls
+export { default as AdminControlsPage } from './admin/controls/control_list'
+export { default as AdminControlEditPage } from './admin/controls/control_edit'
+
 //instruments
 export { default as AdminInstrumentsPage } from './admin/instruments/instrument_list'
 export { default as AdminInstrumentEditPage } from './admin/instruments/instrument_edit'

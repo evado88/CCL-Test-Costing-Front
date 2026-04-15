@@ -1,9 +1,9 @@
 const AppInfo = {
   appName: "CIDRZ Central Lab Test Costing",
-  appCode: "CCL",
-  apiUrl: "http://127.0.0.1:8700/",
-  onlineApiUrl: "",
-  localApiUrl: "http://127.0.0.1:8700/",
+  appCode: "CCL Costing",
+  apiUrl: "http://127.0.0.1:8700/ccl/",
+  onlineApiUrl: "https://api.api-zm.online/ccl/",
+  localApiUrl: "http://127.0.0.1:8700/ccl/",
   configApiUrl: "sacco-config/1",
   uploadUrl: "",
   fileServer: "",

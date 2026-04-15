@@ -108,12 +108,11 @@ const AdminInstrunments = () => {
                 />
                 <Item name="columnChooserButton" />
               </Toolbar>
-              <Column dataField="id" caption="ID" hidingPriority={4}></Column>
+              <Column dataField="id" caption="ID" hidingPriority={10}></Column>
               <Column
                 dataField="name"
                 caption="Name"
-                hidingPriority={8}
-                sortOrder="asc"
+                hidingPriority={9}
                 cellRender={(e) => {
                   return (
                     <a href={`/admin/instruments/edit/${e.data.id}`}>
@@ -121,6 +120,11 @@ const AdminInstrunments = () => {
                     </a>
                   );
                 }}
+              ></Column>
+              <Column
+                dataField="serial_no"
+                caption="Serial No"
+                hidingPriority={8}
               ></Column>
               <Column
                 dataField="cost"

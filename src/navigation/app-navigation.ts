@@ -15,7 +15,7 @@ export const navigation: MenuItem[] = [
     roles: [1, 2],
     items: [],
   },
-    {
+  {
     key: "users",
     text: "Users",
     icon: "fa fa-bell",
@@ -50,7 +50,7 @@ export const navigation: MenuItem[] = [
       },
     ],
   },
-  
+
   {
     key: "reagents",
     text: "Reagents",
@@ -68,8 +68,24 @@ export const navigation: MenuItem[] = [
       },
     ],
   },
+  {
+    key: "consumables",
+    text: "Consumables",
+    icon: "fa fa-flask",
+    path: "#",
+    roles: [1, 2],
+    items: [
+      {
+        key: "groups",
+        text: "All Consumbales",
+        icon: "",
+        path: "/admin/controls/list",
+        roles: [1, 2],
+        items: [],
+      },
+    ],
+  },
 
-  
   {
     key: "instruments",
     text: "Instruments",
@@ -88,7 +104,6 @@ export const navigation: MenuItem[] = [
     ],
   },
 
-  
   {
     key: "tests",
     text: "Tests",

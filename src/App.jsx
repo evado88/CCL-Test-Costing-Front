@@ -1,5 +1,5 @@
 import "./App.css";
-import "devextreme/dist/css/dx.softblue.compact.css";
+import "devextreme/dist/css/dx.greenmist.compact.css";
 import MainLayout from "./components/MainLayout";
 import AuthLayout from "./components/AuthLayout";
 import PrivateRoute from "./auth/PrivateRoute";
@@ -22,6 +22,8 @@ import {
   AdminReagentEditPage,
   AdminTestsPage,
   AdminTestEditPage,
+  AdminControlsPage,
+  AdminControlEditPage
 
 } from "./pages";
 import { BrowserRouter } from "react-router-dom";
@@ -64,6 +66,11 @@ function App() {
           <Route path="/admin/reagents/list" element={<AdminReagentsPage/>} />
           <Route path="/admin/reagents/add" element={<AdminReagentEditPage/>} />
           <Route path="/admin/reagents/edit/:eId" element={<AdminReagentEditPage/>} />
+
+          {/* controls */}
+          <Route path="/admin/controls/list" element={<AdminControlsPage/>} />
+          <Route path="/admin/controls/add" element={<AdminControlEditPage/>} />
+          <Route path="/admin/controls/edit/:eId" element={<AdminControlEditPage/>} />
 
           {/* tests */}
           <Route path="/admin/tests/list" element={<AdminTestsPage/>} />
