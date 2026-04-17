@@ -36,3 +36,6 @@ export { default as AdminInstrumentEditPage } from './admin/instruments/instrume
 //dashboard
 export { default as MemberDashboardPage } from './dashboard'
 
+//import page
+export { default as AdminDataImportPage } from './admin/data/data_import'
+

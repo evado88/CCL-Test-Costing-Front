@@ -121,4 +121,21 @@ export const navigation: MenuItem[] = [
       },
     ],
   },
+  {
+    key: "import",
+    text: "Data Import",
+    icon: "fa fa-upload",
+    path: "#",
+    roles: [1, 2],
+    items: [
+      {
+        key: "groups",
+        text: "Import Data",
+        icon: "",
+        path: "/admin/data-import",
+        roles: [1, 2],
+        items: [],
+      },
+    ],
+  },
 ];

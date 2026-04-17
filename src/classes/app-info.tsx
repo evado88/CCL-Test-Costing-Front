@@ -11,6 +11,14 @@ const AppInfo = {
   yesNoList: ["No", "Yes"],
   paymethodsList: ["Bank Transfer", "Airtel", "MTN", "Zamtel"],
   memberPaymentMethodList: ["Mobile", "Bank"],
+  dataImportTypes: [
+    "Users",
+    "Labs",
+    "Reagents",
+    "Consumables",
+    "Instruments",
+    "Tests",
+  ],
   reagentTypes: [
     {
       name: "Liquid Bottle",
