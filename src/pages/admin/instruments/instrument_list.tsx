@@ -17,7 +17,7 @@ import DataGrid, {
 
 import Assist from "../../../classes/assist";
 import PageConfig from "../../../classes/page-config";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const AdminInstrunments = () => {
   const navigate = useNavigate();
@@ -115,9 +115,9 @@ const AdminInstrunments = () => {
                 hidingPriority={9}
                 cellRender={(e) => {
                   return (
-                    <a href={`/admin/instruments/edit/${e.data.id}`}>
+                    <Link to={`/admin/instruments/edit/${e.data.id}`}>
                       {e.text}
-                    </a>
+                    </Link>
                   );
                 }}
               ></Column>

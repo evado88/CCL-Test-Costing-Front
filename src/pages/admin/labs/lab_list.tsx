@@ -17,7 +17,7 @@ import DataGrid, {
 
 import Assist from "../../../classes/assist";
 import PageConfig from "../../../classes/page-config";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const AdminLabs = () => {
   const navigate = useNavigate();
@@ -116,11 +116,11 @@ const AdminLabs = () => {
                 sortOrder="asc"
                 cellRender={(e) => {
                   return (
-                    <a
-                      href={`/admin/labs/edit/${e.data.id}`}
+                    <Link
+                      to={`/admin/labs/edit/${e.data.id}`}
                     >
                       {e.text}
-                    </a>
+                    </Link>
                   );
                 }}
               ></Column>
