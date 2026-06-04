@@ -37,5 +37,9 @@ export { default as AdminInstrumentEditPage } from './admin/instruments/instrume
 export { default as MemberDashboardPage } from './dashboard'
 
 //import page
-export { default as AdminDataImportPage } from './admin/data/data_import'
-
+export { default as AdminLabImportPage } from './admin/data/lab_import'
+export { default as AdminReagentImportPage } from './admin/data/reagent_import'
+export { default as AdminConsumableImportPage } from './admin/data/consumable_import'
+export { default as AdminInstrumentImportPage } from './admin/data/instrument_import'
+export { default as AdminTestImportPage } from './admin/data/test_import'
+export { default as AdminLabTestPriceVolumeImport } from './admin/data/test_price_volume_import'

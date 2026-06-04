@@ -24,7 +24,12 @@ import {
   AdminTestEditPage,
   AdminControlsPage,
   AdminControlEditPage,
-  AdminDataImportPage,
+  AdminLabImportPage,
+  AdminReagentImportPage,
+  AdminConsumableImportPage,
+  AdminInstrumentImportPage,
+  AdminTestImportPage,
+  AdminLabTestPriceVolumeImport
 } from "./pages";
 import { BrowserRouter } from "react-router-dom";
 
@@ -54,8 +59,13 @@ function App() {
             path="/"
             element={<MemberDashboardPage></MemberDashboardPage>}
           />
-          {/* Dashboards */}
-          <Route path="/admin/data-import" element={<AdminDataImportPage />} />
+          {/* Data Import */}
+          <Route path="/admin/data-import/labs" element={<AdminLabImportPage />} />
+          <Route path="/admin/data-import/reagents" element={<AdminReagentImportPage />} />
+          <Route path="/admin/data-import/consumables" element={<AdminConsumableImportPage />} />
+          <Route path="/admin/data-import/instruments" element={<AdminInstrumentImportPage />} />
+          <Route path="/admin/data-import/tests" element={<AdminTestImportPage />} />
+          <Route path="/admin/data-import/lab-test-price-volume" element={<AdminLabTestPriceVolumeImport />} />
 
           {/* labs */}
           <Route path="/admin/labs/list" element={<AdminLabsPage />} />

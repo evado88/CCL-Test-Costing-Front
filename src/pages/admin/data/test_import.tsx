@@ -35,14 +35,14 @@ import DataGrid, { Column, Pager, Paging } from "devextreme-react/data-grid";
 import FileUploader from "devextreme-react/file-uploader";
 import DropDownBox, { DropDownBoxTypes } from "devextreme-react/drop-down-box";
 
-const DataImport = () => {
+const TestsDataImport = () => {
   //user
   const navigate = useNavigate();
   const { user } = useAuth();
   const { eId } = useParams(); // Destructure the parameter directly
 
   //posting
-  const [importType, setImportType] = useState<string | undefined>('Tests');
+  const [importType, setImportType] = useState<string | undefined>("Tests");
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const [rateList, setRateList] = useState<any[]>([]);
 
@@ -51,8 +51,9 @@ const DataImport = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
 
-  const pageConfig = new PageConfig("Import Data", "", "", "", "");
+  const pageConfig = new PageConfig("Tests", "", "", "", "");
 
+  //columns
   const onFormSubmit = (e: React.FormEvent) => {
     setSaving(true);
 
@@ -63,8 +64,6 @@ const DataImport = () => {
       cat_name: name,
       rate_list: rateList,
     };
-
-    console.log("pd", postData);
 
     const url =
       pageConfig.Id == 0
@@ -123,27 +122,9 @@ const DataImport = () => {
             <form id="formMain" onSubmit={onFormSubmit}>
               <div className="form">
                 <div className="dx-fieldset">
-                  <div className="dx-fieldset-header">Name</div>
-                    <div className="dx-field">
-                    <div className="dx-field-label">
-                      Choose Data to Import
-                    </div>
-                    <SelectBox
-                      className="dx-field-value"
-                      placeholder="Choose Data to Import"
-                      dataSource={AppInfo.dataImportTypes}
-                      value={importType}
-                      disabled={error || saving}
-                      onValueChange={(text) => setImportType(text)}
-                    >
-                      <Validator>
-                        <RequiredRule message="Please choose the data to import" />
-                      </Validator>
-                    </SelectBox>
+                  <div className="dx-fieldset-header">
+                    Import {pageConfig.Title}
                   </div>
-                </div>
-                <div className="dx-fieldset">
-                  <div className="dx-fieldset-header">{importType}</div>
                   <div className="dx-field">
                     <div className="dx-field-label">Upload File (5MB Max)</div>
                     <FileUploader
@@ -166,12 +147,12 @@ const DataImport = () => {
                           }
                         } else {
                           Assist.showMessage(
-                            `Unable to upload bill rate list. Please try again`,
+                            `Unable to upload ${pageConfig.Title} list. Please try again`,
                             "error",
                           );
                         }
                       }}
-                      uploadUrl={`${AppInfo.apiUrl}attachments/create/type/billRateImport/parent/0`}
+                      uploadUrl={`${AppInfo.apiUrl}attachments/create/type/import${pageConfig.Title}/parent/0`}
                       onUploadError={(e) => {
                         const error = JSON.parse(e.error.response);
 
@@ -194,28 +175,88 @@ const DataImport = () => {
                       <Paging defaultPageSize={10} />
                       <Pager showPageSizeSelector={true} showInfo={true} />
                       <Column
-                        dataField="Name"
+                        dataField="id"
+                        caption="No"
+                        hidingPriority={17}
+                      ></Column>
+                      <Column
+                        dataField="name"
                         caption="Name"
+                        hidingPriority={16}
+                        sortOrder="asc"
+                      ></Column>
+                      <Column
+                        dataField="annual_nhima"
+                        caption="Annual NHIMA"
+                        format={",##0.###"}
+                        hidingPriority={15}
+                      ></Column>
+                      <Column
+                        dataField="annual_credit"
+                        caption="Annual Credit"
+                        format={",##0.###"}
+                        hidingPriority={14}
+                      ></Column>
+                      <Column
+                        dataField="annual_research"
+                        caption="Annual Research"
+                        format={",##0.###"}
+                        hidingPriority={13}
+                      ></Column>
+                      <Column
+                        dataField="annual_walkins"
+                        caption="Annual Walkins"
+                        format={",##0.###"}
+                        hidingPriority={12}
+                      ></Column>
+                      <Column
+                        dataField="annual_shift"
+                        caption="Annual Shift"
+                        format={",##0.###"}
+                        hidingPriority={11}
+                      ></Column>
+                      <Column
+                        dataField="annual_total"
+                        caption="Annual Total"
+                        format={",##0.###"}
+                        hidingPriority={10}
+                      ></Column>
+                      <Column
+                        dataField="sites_no"
+                        caption="Sites No"
+                        format={",##0.###"}
+                        hidingPriority={9}
+                      ></Column>
+                      <Column
+                        dataField="staff_no"
+                        caption="Staff No"
+                        format={",##0.###"}
+                        hidingPriority={8}
+                      ></Column>
+                      <Column
+                        dataField="runs_day_week"
+                        caption="Days Per Week"
+                        format={",##0.###"}
+                        hidingPriority={7}
+                      ></Column>
+                      <Column
+                        dataField="runs_shift_day"
+                        caption="Shifts Per Day"
+                        format={",##0.###"}
                         hidingPriority={6}
                       ></Column>
                       <Column
-                        dataField="From"
+                        dataField="runs_annual"
+                        caption="Annual Runs"
                         format={",##0.###"}
-                        caption="From (m3)"
                         hidingPriority={5}
                       ></Column>
                       <Column
-                        dataField="To"
+                        dataField="runs_average_volume"
+                        caption="Volume Per Run"
                         format={",##0.###"}
-                        caption="To (m3)"
                         hidingPriority={4}
                       ></Column>
-                      <Column
-                        dataField="Rate"
-                        format={",##0.###"}
-                        caption="Rate (ZMW)"
-                        hidingPriority={1}
-                      />
                     </DataGrid>
                   </div>
                 </div>
@@ -236,7 +277,9 @@ const DataImport = () => {
                       className="button-indicator"
                       visible={saving}
                     />
-                    <span className="dx-button-text">{pageConfig.Title}</span>
+                    <span className="dx-button-text">
+                      Import {pageConfig.Title}
+                    </span>
                   </Button>
                 </div>
               </div>
@@ -248,4 +291,4 @@ const DataImport = () => {
   );
 };
 
-export default DataImport;
+export default TestsDataImport;
