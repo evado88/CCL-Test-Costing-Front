@@ -56,6 +56,15 @@ const AdminTests = () => {
     [],
   );
 
+  const importButtonOptions = useMemo(
+    () => ({
+      icon: "upload",
+      text: "Import",
+      onClick: () => navigate("/admin/data-import/tests"),
+    }),
+    [],
+  );
+
   const columns = [
     { dataField: "id", caption: "ID", hidingPriority: 24 },
     {
@@ -240,6 +249,12 @@ const AdminTests = () => {
                   showText="inMenu"
                   widget="dxButton"
                   options={addButtonOptions}
+                />
+                <Item
+                  location="before"
+                  locateInMenu="auto"
+                  widget="dxButton"
+                  options={importButtonOptions}
                 />
                 <Item name="columnChooserButton" />
               </Toolbar>

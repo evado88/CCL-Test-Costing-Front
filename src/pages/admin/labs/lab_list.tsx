@@ -25,13 +25,7 @@ const AdminLabs = () => {
   const [loadingText, setLoadingText] = useState("Loading data...");
   const [loading, setLoading] = useState(true);
 
-  const pageConfig = new PageConfig(
-    "Labs",
-    "labs/list",
-    "",
-    "Lab",
-    ""
-  );
+  const pageConfig = new PageConfig("Labs", "labs/list", "", "Lab", "");
 
   useEffect(() => {
     setLoading(true);
@@ -57,11 +51,18 @@ const AdminLabs = () => {
     () => ({
       icon: "add",
       text: "Refresh",
-      onClick: () => navigate('/admin/labs/add'),
+      onClick: () => navigate("/admin/labs/add"),
     }),
-    []
+    [],
   );
-
+  const importButtonOptions = useMemo(
+    () => ({
+      icon: "upload",
+      text: "Import",
+      onClick: () => navigate("/admin/data-import/labs"),
+    }),
+    [],
+  );
   return (
     <div className="page-content" style={{ minHeight: "862px" }}>
       <Titlebar
@@ -106,6 +107,12 @@ const AdminLabs = () => {
                   widget="dxButton"
                   options={addButtonOptions}
                 />
+                <Item
+                  location="before"
+                  locateInMenu="auto"
+                  widget="dxButton"
+                  options={importButtonOptions}
+                />
                 <Item name="columnChooserButton" />
               </Toolbar>
               <Column dataField="id" caption="ID" hidingPriority={4}></Column>
@@ -115,11 +122,7 @@ const AdminLabs = () => {
                 hidingPriority={3}
                 cellRender={(e) => {
                   return (
-                    <Link
-                      to={`/admin/labs/edit/${e.data.id}`}
-                    >
-                      {e.text}
-                    </Link>
+                    <Link to={`/admin/labs/edit/${e.data.id}`}>{e.text}</Link>
                   );
                 }}
               ></Column>

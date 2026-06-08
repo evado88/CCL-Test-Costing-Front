@@ -61,7 +61,14 @@ const AdminReagents = () => {
     }),
     [],
   );
-
+  const importButtonOptions = useMemo(
+    () => ({
+      icon: "upload",
+      text: "Import",
+      onClick: () => navigate("/admin/data-import/reagents"),
+    }),
+    [],
+  );
   return (
     <div className="page-content" style={{ minHeight: "862px" }}>
       <Titlebar
@@ -91,7 +98,7 @@ const AdminReagents = () => {
               <Editing
                 mode="row"
                 allowUpdating={false}
-                allowDeleting={true}
+                allowDeleting={false}
                 allowAdding={false}
               />
               <Pager showPageSizeSelector={true} showInfo={true} />
@@ -106,6 +113,12 @@ const AdminReagents = () => {
                   widget="dxButton"
                   options={addButtonOptions}
                 />
+                <Item
+                  location="before"
+                  locateInMenu="auto"
+                  widget="dxButton"
+                  options={importButtonOptions}
+                />
                 <Item name="columnChooserButton" />
               </Toolbar>
               <Column dataField="id" caption="ID" hidingPriority={4}></Column>
@@ -116,7 +129,9 @@ const AdminReagents = () => {
                 sortOrder="asc"
                 cellRender={(e) => {
                   return (
-                    <Link to={`/admin/reagents/edit/${e.data.id}`}>{e.text}</Link>
+                    <Link to={`/admin/reagents/edit/${e.data.id}`}>
+                      {e.text}
+                    </Link>
                   );
                 }}
               ></Column>

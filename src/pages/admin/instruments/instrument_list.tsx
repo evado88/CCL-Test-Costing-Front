@@ -61,7 +61,14 @@ const AdminInstrunments = () => {
     }),
     [],
   );
-
+  const importButtonOptions = useMemo(
+    () => ({
+      icon: "upload",
+      text: "Import",
+      onClick: () => navigate("/admin/data-import/instruments"),
+    }),
+    [],
+  );
   return (
     <div className="page-content" style={{ minHeight: "862px" }}>
       <Titlebar
@@ -91,7 +98,7 @@ const AdminInstrunments = () => {
               <Editing
                 mode="row"
                 allowUpdating={false}
-                allowDeleting={true}
+                allowDeleting={false}
                 allowAdding={false}
               />
               <Pager showPageSizeSelector={true} showInfo={true} />
@@ -105,6 +112,12 @@ const AdminInstrunments = () => {
                   showText="inMenu"
                   widget="dxButton"
                   options={addButtonOptions}
+                />
+                <Item
+                  location="before"
+                  locateInMenu="auto"
+                  widget="dxButton"
+                  options={importButtonOptions}
                 />
                 <Item name="columnChooserButton" />
               </Toolbar>
@@ -172,7 +185,7 @@ const AdminInstrunments = () => {
                 format={",##0.###"}
                 hidingPriority={4}
               ></Column>
-                 <Column
+              <Column
                 dataField="calibration_annual_cost"
                 caption="Calibration Annual Cost"
                 format={",##0.###"}

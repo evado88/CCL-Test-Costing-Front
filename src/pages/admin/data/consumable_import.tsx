@@ -103,9 +103,6 @@ const ConsumablesDataImport = () => {
     }, Assist.DEV_DELAY);
   };
 
-  const toolbar: any = useMemo(() => {
-    return AppInfo.htmlToolbar;
-  }, []);
 
   return (
     <div id="pageRoot" className="page-content">

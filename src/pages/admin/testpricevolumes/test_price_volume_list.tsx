@@ -61,6 +61,14 @@ const AdminTestPriceVolumes = () => {
     }),
     [],
   );
+  const importButtonOptions = useMemo(
+    () => ({
+      icon: "upload",
+      text: "Import",
+      onClick: () => navigate("/admin/data-import/lab-test-price-volume"),
+    }),
+    [],
+  );
 
   return (
     <div className="page-content" style={{ minHeight: "862px" }}>
@@ -105,6 +113,12 @@ const AdminTestPriceVolumes = () => {
                   showText="inMenu"
                   widget="dxButton"
                   options={addButtonOptions}
+                />
+                <Item
+                  location="before"
+                  locateInMenu="auto"
+                  widget="dxButton"
+                  options={importButtonOptions}
                 />
                 <Item name="columnChooserButton" />
               </Toolbar>
