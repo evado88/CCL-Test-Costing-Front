@@ -55,7 +55,7 @@ const InstrumentsDataImport = () => {
 
   const pageConfig = new PageConfig(
     "Instruments",
-    "instruments/list",
+    "/admin/instruments/list",
     "",
     "",
     "instruments/import",
