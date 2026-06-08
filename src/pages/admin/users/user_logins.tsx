@@ -19,17 +19,17 @@ import Assist from "../../../classes/assist";
 import PageConfig from "../../../classes/page-config";
 import { Link, useNavigate } from "react-router-dom";
 
-const AdminLabs = () => {
+const AdminLogins = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [loadingText, setLoadingText] = useState("Loading data...");
   const [loading, setLoading] = useState(true);
 
   const pageConfig = new PageConfig(
-    "Labs",
-    "labs/list",
+    "Logins",
+    "logins/list",
     "",
-    "Lab",
+    "Logins",
     ""
   );
 
@@ -42,7 +42,7 @@ const AdminLabs = () => {
         setLoading(false);
 
         if (res.length === 0) {
-          setLoadingText("No Data");
+          setLoadingText("No announcements added for now");
         } else {
           setLoadingText("");
         }
@@ -56,8 +56,8 @@ const AdminLabs = () => {
   const addButtonOptions = useMemo(
     () => ({
       icon: "add",
-      text: "Refresh",
-      onClick: () => navigate('/admin/labs/add'),
+      text: "New User",
+      onClick: () => navigate("/admin/users/add"),
     }),
     []
   );
@@ -91,7 +91,7 @@ const AdminLabs = () => {
               <Editing
                 mode="row"
                 allowUpdating={false}
-                allowDeleting={true}
+                allowDeleting={false}
                 allowAdding={false}
               />
               <Pager showPageSizeSelector={true} showInfo={true} />
@@ -99,34 +99,12 @@ const AdminLabs = () => {
               <LoadPanel enabled={loading} />
               <ColumnChooser enabled={true} mode="select"></ColumnChooser>
               <Toolbar>
-                <Item
-                  location="before"
-                  locateInMenu="auto"
-                  showText="inMenu"
-                  widget="dxButton"
-                  options={addButtonOptions}
-                />
                 <Item name="columnChooserButton" />
               </Toolbar>
-              <Column dataField="id" caption="ID" hidingPriority={4}></Column>
+              <Column dataField="id" caption="ID" hidingPriority={3}></Column>
               <Column
-                dataField="name"
-                caption="Name"
-                hidingPriority={3}
-                cellRender={(e) => {
-                  return (
-                    <Link
-                      to={`/admin/labs/edit/${e.data.id}`}
-                    >
-                      {e.text}
-                    </Link>
-                  );
-                }}
-              ></Column>
-              <Column
-                dataField="created_by"
-                caption="User"
-                minWidth={120}
+                dataField="username"
+                caption="Username"
                 hidingPriority={2}
               ></Column>
               <Column
@@ -144,4 +122,4 @@ const AdminLabs = () => {
   );
 };
 
-export default AdminLabs;
+export default AdminLogins;

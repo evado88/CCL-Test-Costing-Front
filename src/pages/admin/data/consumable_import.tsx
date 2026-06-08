@@ -34,6 +34,7 @@ import AppInfo from "../../../classes/app-info";
 import DataGrid, { Column, Pager, Paging } from "devextreme-react/data-grid";
 import FileUploader from "devextreme-react/file-uploader";
 import DropDownBox, { DropDownBoxTypes } from "devextreme-react/drop-down-box";
+import { confirm } from "devextreme/ui/dialog";
 
 const ConsumablesDataImport = () => {
   //user
@@ -44,46 +45,56 @@ const ConsumablesDataImport = () => {
   //posting
   const [importType, setImportType] = useState<string | undefined>("Tests");
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
-  const [rateList, setRateList] = useState<any[]>([]);
+  const [itemList, setItemList] = useState<any[]>([]);
 
   //service
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
 
-  const pageConfig = new PageConfig("Consumables", "", "", "", "");
+  const pageConfig = new PageConfig("Consumables", "/admin/controls/list", "", "", "reagents/import/1");
 
-  //columns
   const onFormSubmit = (e: React.FormEvent) => {
-    setSaving(true);
-
     e.preventDefault();
+
+    if (itemList.length == 0) {
+      Assist.showMessage(`Please upload a list of ${pageConfig.Title} first`, "warning");
+      return;
+    }
+
+    let result = confirm(
+      `Are you sure you want to import this list of ${pageConfig.Title}?`,
+      "Confirm submission",
+    );
+    result.then((dialogResult) => {
+      if (dialogResult) {
+        submitUploadItems();
+      }
+    });
+  };
+
+  const submitUploadItems = () => {
+    setSaving(true);
 
     const postData = {
       user_id: user.userid,
-      cat_name: name,
-      rate_list: rateList,
+      items: itemList,
     };
 
-    const url =
-      pageConfig.Id == 0
-        ? `categories/create`
-        : `categories/update/${pageConfig.Id}`;
-
     setTimeout(() => {
-      Assist.postPutData(pageConfig.Title, url, postData, pageConfig.Id)
+      Assist.postPutData(
+        pageConfig.Title,
+        pageConfig.UpdateUrl,
+        postData,
+        pageConfig.Id,
+      )
         .then((data: any) => {
           setSaving(false);
 
-          Assist.showMessage(
-            `You have successfully updated the ${pageConfig.Title}!`,
-            "success",
-          );
+          Assist.showMessage(data.message, "success");
 
-          if (pageConfig.Id == 0) {
-            //navigate
-            navigate(`/admin/categories/edit/${data.id}`);
-          }
+          //navigate
+          navigate(pageConfig.Url);
         })
         .catch((message) => {
           setSaving(false);
@@ -143,7 +154,7 @@ const ConsumablesDataImport = () => {
                               "error",
                             );
                           } else {
-                            setRateList(res.items);
+                            setItemList(res.items);
                           }
                         } else {
                           Assist.showMessage(
@@ -163,7 +174,7 @@ const ConsumablesDataImport = () => {
                   <div className="dx-field">
                     <DataGrid
                       className={"dx-card wide-card"}
-                      dataSource={rateList}
+                      dataSource={itemList}
                       keyExpr={"no"}
                       noDataText={`No import file uploaded`}
                       showBorders={false}

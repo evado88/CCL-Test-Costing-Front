@@ -1,89 +1,78 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState } from "react";
 import { Titlebar } from "../../../components/titlebar";
 import { Card } from "../../../components/card";
 import { Row } from "../../../components/row";
 import { Col } from "../../../components/column";
-import SelectBox from "devextreme-react/select-box";
-import { TextBox } from "devextreme-react/text-box";
-import {
-  Validator,
-  RequiredRule,
-  AsyncRule,
-  CompareRule,
-  CustomRule,
-} from "devextreme-react/validator";
-import TextArea from "devextreme-react/text-area";
-import { NumberBox } from "devextreme-react/number-box";
 import Button from "devextreme-react/button";
 import ValidationSummary from "devextreme-react/validation-summary";
 import { LoadPanel } from "devextreme-react/load-panel";
-import DateBox from "devextreme-react/date-box";
-import { useTheme } from "../../../context/ThemeContext";
 import { useAuth } from "../../../context/AuthContext";
 import PageConfig from "../../../classes/page-config";
 import Assist from "../../../classes/assist";
-import axios from "axios";
 import { LoadIndicator } from "devextreme-react/load-indicator";
-import { useNavigate, useParams } from "react-router-dom";
-import HtmlEditor, {
-  Toolbar,
-  Item,
-  MediaResizing,
-} from "devextreme-react/html-editor";
+import { useNavigate } from "react-router-dom";
 import AppInfo from "../../../classes/app-info";
 import DataGrid, { Column, Pager, Paging } from "devextreme-react/data-grid";
 import FileUploader from "devextreme-react/file-uploader";
-import DropDownBox, { DropDownBoxTypes } from "devextreme-react/drop-down-box";
+import { confirm } from "devextreme/ui/dialog";
 
 const LabsDataImport = () => {
   //user
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { eId } = useParams(); // Destructure the parameter directly
 
   //posting
-  const [importType, setImportType] = useState<string | undefined>("Tests");
-  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
-  const [rateList, setRateList] = useState<any[]>([]);
+  const [itemList, setItemList] = useState<any[]>([]);
 
   //service
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
 
-  const pageConfig = new PageConfig("Labs", "", "", "", "");
+  const pageConfig = new PageConfig("Labs", "/admin/labs/list", "", "", "labs/import");
 
-  //columns
+
   const onFormSubmit = (e: React.FormEvent) => {
-    setSaving(true);
-
     e.preventDefault();
+
+    if (itemList.length == 0) {
+      Assist.showMessage(`Please upload a list of ${pageConfig.Title} first`, "warning");
+      return;
+    }
+
+    let result = confirm(
+      `Are you sure you want to import this list of ${pageConfig.Title}?`,
+      "Confirm submission",
+    );
+    result.then((dialogResult) => {
+      if (dialogResult) {
+        submitUploadItems();
+      }
+    });
+  };
+
+  const submitUploadItems = () => {
+    setSaving(true);
 
     const postData = {
       user_id: user.userid,
-      cat_name: name,
-      rate_list: rateList,
+      items: itemList,
     };
 
-    const url =
-      pageConfig.Id == 0
-        ? `categories/create`
-        : `categories/update/${pageConfig.Id}`;
-
     setTimeout(() => {
-      Assist.postPutData(pageConfig.Title, url, postData, pageConfig.Id)
+      Assist.postPutData(
+        pageConfig.Title,
+        pageConfig.UpdateUrl,
+        postData,
+        pageConfig.Id,
+      )
         .then((data: any) => {
           setSaving(false);
 
-          Assist.showMessage(
-            `You have successfully updated the ${pageConfig.Title}!`,
-            "success",
-          );
+          Assist.showMessage(data.message, "success");
 
-          if (pageConfig.Id == 0) {
-            //navigate
-            navigate(`/admin/categories/edit/${data.id}`);
-          }
+          //navigate
+          navigate(pageConfig.Url);
         })
         .catch((message) => {
           setSaving(false);
@@ -91,10 +80,6 @@ const LabsDataImport = () => {
         });
     }, Assist.DEV_DELAY);
   };
-
-  const toolbar: any = useMemo(() => {
-    return AppInfo.htmlToolbar;
-  }, []);
 
   return (
     <div id="pageRoot" className="page-content">
@@ -143,7 +128,7 @@ const LabsDataImport = () => {
                               "error",
                             );
                           } else {
-                            setRateList(res.items);
+                            setItemList(res.items);
                           }
                         } else {
                           Assist.showMessage(
@@ -163,7 +148,7 @@ const LabsDataImport = () => {
                   <div className="dx-field">
                     <DataGrid
                       className={"dx-card wide-card"}
-                      dataSource={rateList}
+                      dataSource={itemList}
                       keyExpr={"no"}
                       noDataText={`No import file uploaded`}
                       showBorders={false}
@@ -180,7 +165,10 @@ const LabsDataImport = () => {
                         hidingPriority={4}
                       ></Column>
                       <Column dataField="name" caption="Name"></Column>
-                      <Column dataField="description" caption="Description"></Column>
+                      <Column
+                        dataField="description"
+                        caption="Description"
+                      ></Column>
                     </DataGrid>
                   </div>
                 </div>

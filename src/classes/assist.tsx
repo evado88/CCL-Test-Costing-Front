@@ -66,6 +66,26 @@ class Assist {
     appId: "1:878075714362:web:55575ac3647ff7d3cd0e03",
   };
 
+
+ static monthMap = new Map([
+    ["january", { number: 1, name: "January" }],
+    ["february", { number: 2, name: "February" }],
+    ["march", { number: 3, name: "March" }],
+    ["april", { number: 4, name: "April" }],
+    ["may", { number: 5, name: "May" }],
+    ["june", { number: 6, name: "June" }],
+    ["july", { number: 7, name: "July" }],
+    ["august", { number: 8, name: "August" }],
+    ["september", { number: 9, name: "September" }],
+    ["october", { number: 10, name: "October" }],
+    ["november", { number: 11, name: "November" }],
+    ["december", { number: 12, name: "December" }]
+]);
+
+static getMonth(monthName: string) {
+    return Assist.monthMap.get(monthName.trim().toLowerCase());
+}
+
   static getAgeUTC(mysqlDateString: string) {
     // Parse the date strictly as UTC
     const birthDate = new Date(mysqlDateString);

@@ -30,6 +30,14 @@ export const navigation: MenuItem[] = [
         roles: [1, 2],
         items: [],
       },
+      {
+        key: "all-logins",
+        text: "All Logins",
+        icon: "",
+        path: "/admin/users/logins",
+        roles: [1, 2],
+        items: [],
+      },
     ],
   },
 
@@ -113,9 +121,17 @@ export const navigation: MenuItem[] = [
     items: [
       {
         key: "groups",
-        text: "All tests",
+        text: "All Tests",
         icon: "",
         path: "/admin/tests/list",
+        roles: [1, 2],
+        items: [],
+      },
+      {
+        key: "groups",
+        text: "Price Volumes",
+        icon: "",
+        path: "/admin/test-price-volumes/list",
         roles: [1, 2],
         items: [],
       },

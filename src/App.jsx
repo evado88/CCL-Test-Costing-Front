@@ -29,7 +29,10 @@ import {
   AdminConsumableImportPage,
   AdminInstrumentImportPage,
   AdminTestImportPage,
-  AdminLabTestPriceVolumeImport
+  AdminLabTestPriceVolumeImport,
+  AdminTestPriceVolumesPage,
+  AdminTestPriceVolumeEditPage,
+  AdminLoginsPage,
 } from "./pages";
 import { BrowserRouter } from "react-router-dom";
 
@@ -54,18 +57,37 @@ function App() {
           <Route path="/admin/users/add" element={<AdminUserEditPage />} />
           <Route path="/admin/users/view/:eId" element={<AdminUserPage />} />
           <Route path="/users/view/id/:eId" element={<AdminUserPage />} />
+          <Route path="/admin/users/logins" element={<AdminLoginsPage />} />
           {/* Dashboards */}
           <Route
             path="/"
             element={<MemberDashboardPage></MemberDashboardPage>}
           />
           {/* Data Import */}
-          <Route path="/admin/data-import/labs" element={<AdminLabImportPage />} />
-          <Route path="/admin/data-import/reagents" element={<AdminReagentImportPage />} />
-          <Route path="/admin/data-import/consumables" element={<AdminConsumableImportPage />} />
-          <Route path="/admin/data-import/instruments" element={<AdminInstrumentImportPage />} />
-          <Route path="/admin/data-import/tests" element={<AdminTestImportPage />} />
-          <Route path="/admin/data-import/lab-test-price-volume" element={<AdminLabTestPriceVolumeImport />} />
+          <Route
+            path="/admin/data-import/labs"
+            element={<AdminLabImportPage />}
+          />
+          <Route
+            path="/admin/data-import/reagents"
+            element={<AdminReagentImportPage />}
+          />
+          <Route
+            path="/admin/data-import/consumables"
+            element={<AdminConsumableImportPage />}
+          />
+          <Route
+            path="/admin/data-import/instruments"
+            element={<AdminInstrumentImportPage />}
+          />
+          <Route
+            path="/admin/data-import/tests"
+            element={<AdminTestImportPage />}
+          />
+          <Route
+            path="/admin/data-import/lab-test-price-volume"
+            element={<AdminLabTestPriceVolumeImport />}
+          />
 
           {/* labs */}
           <Route path="/admin/labs/list" element={<AdminLabsPage />} />
@@ -84,6 +106,20 @@ function App() {
           <Route
             path="/admin/instruments/edit/:eId"
             element={<AdminInstrumentEditPage />}
+          />
+
+          {/* test price volume */}
+          <Route
+            path="/admin/test-price-volumes/list"
+            element={<AdminTestPriceVolumesPage />}
+          />
+          <Route
+            path="/admin/test-price-volumes/add"
+            element={<AdminTestPriceVolumeEditPage />}
+          />
+          <Route
+            path="/admin/test-price-volues/edit/:eId"
+            element={<AdminTestPriceVolumeEditPage />}
           />
 
           {/* reagents */}

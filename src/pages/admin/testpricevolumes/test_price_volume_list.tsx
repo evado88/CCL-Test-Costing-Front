@@ -19,18 +19,18 @@ import Assist from "../../../classes/assist";
 import PageConfig from "../../../classes/page-config";
 import { Link, useNavigate } from "react-router-dom";
 
-const AdminLabs = () => {
+const AdminTestPriceVolumes = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [loadingText, setLoadingText] = useState("Loading data...");
   const [loading, setLoading] = useState(true);
 
   const pageConfig = new PageConfig(
-    "Labs",
-    "labs/list",
+    "Test Price Volumes",
+    "test-price-volmes/list",
     "",
-    "Lab",
-    ""
+    "Test Price Volume",
+    "",
   );
 
   useEffect(() => {
@@ -57,9 +57,9 @@ const AdminLabs = () => {
     () => ({
       icon: "add",
       text: "Refresh",
-      onClick: () => navigate('/admin/labs/add'),
+      onClick: () => navigate("/admin/test-price-volmes/add"),
     }),
-    []
+    [],
   );
 
   return (
@@ -108,25 +108,34 @@ const AdminLabs = () => {
                 />
                 <Item name="columnChooserButton" />
               </Toolbar>
-              <Column dataField="id" caption="ID" hidingPriority={4}></Column>
+              <Column dataField="id" caption="ID" hidingPriority={6}></Column>
               <Column
                 dataField="name"
                 caption="Name"
-                hidingPriority={3}
+                hidingPriority={5}
                 cellRender={(e) => {
                   return (
-                    <Link
-                      to={`/admin/labs/edit/${e.data.id}`}
-                    >
+                    <Link to={`/admin/test-price-volmes/edit/${e.data.id}`}>
                       {e.text}
                     </Link>
                   );
                 }}
               ></Column>
               <Column
+                dataField="month.month_name"
+                caption="Month"
+                format={",##0.###"}
+                hidingPriority={4}
+              ></Column>
+              <Column
+                dataField="price"
+                caption="Price USD"
+                format={",##0.###"}
+                hidingPriority={3}
+              ></Column>
+              <Column
                 dataField="created_by"
                 caption="User"
-                minWidth={120}
                 hidingPriority={2}
               ></Column>
               <Column
@@ -144,4 +153,4 @@ const AdminLabs = () => {
   );
 };
 
-export default AdminLabs;
+export default AdminTestPriceVolumes;

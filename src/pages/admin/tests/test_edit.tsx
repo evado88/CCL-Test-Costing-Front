@@ -40,6 +40,7 @@ import DataGrid, {
   Editing,
 } from "devextreme-react/data-grid";
 import AppInfo from "../../../classes/app-info";
+import CostHelper from "../../../classes/costing-helper";
 
 const AdminTestEdit = () => {
   //user
@@ -158,19 +159,22 @@ const AdminTestEdit = () => {
   }, []);
 
   //Calculate annual test volume
-  const annualTestVolume =
-    (testCredit ?? 0) +
-    (testNHIMA ?? 0) +
-    (testWalkin ?? 0) +
-    (testResearch ?? 0);
+  const annualTestVolume = () =>
+    CostHelper.getTestAnnualVolume(
+      testCredit,
+      testNHIMA,
+      testWalkin,
+      testResearch,
+    );
 
-  const anticipatedAnnualTestVolume = Assist.applyPercent(
-    annualTestVolume,
-    testPercentShift ?? 0,
-  );
+  const anticipatedAnnualTestVolume = () =>
+    CostHelper.getTestAnticipatedAnnualTestVolume(
+      annualTestVolume(),
+      testPercentShift,
+    );
 
   useEffect(() => {
-    const testVolume = anticipatedAnnualTestVolume;
+    const testVolume = anticipatedAnnualTestVolume();
 
     if (testVolume > 0) {
       Assist.log("Updating tables with new test volume: " + testVolume);
@@ -179,37 +183,39 @@ const AdminTestEdit = () => {
     }
   }, [testCredit, testNHIMA, testWalkin, testResearch, testPercentShift]);
 
-  const annualRuns =
-    52 * (testRunsDayPerWeek ?? 0) * (testRunsShiftPerWeek ?? 0);
+  const annualRuns = () =>
+    CostHelper.getTestAnnualRuns(testRunsDayPerWeek, testRunsShiftPerWeek);
 
-  const testVolumePerRun =
-    annualRuns == 0 ? 0 : anticipatedAnnualTestVolume / annualRuns;
+  const testVolumePerRun = () =>
+    CostHelper.getTestVolumePerRun(anticipatedAnnualTestVolume(), annualRuns());
 
-  const sampleTotalLaborMinutesPerYear = () => {
-    return (
-      (setupMinutes ?? 0) +
-      (analysisMinutes ?? 0) +
-      (resultReviewMinutes ?? 0) +
-      (resultDocumentationMinutes ?? 0) +
-      (retention ?? 0)
+  const sampleTotalLaborMinutesPerYear = () =>
+    CostHelper.getTestSampleTotalLaborMinutesPerYear(
+      setupMinutes,
+      analysisMinutes,
+      resultReviewMinutes,
+      resultDocumentationMinutes,
+      retention,
     );
-  };
-  const sampleTotalLaborPerYear = () => {
-    return sampleTotalLaborMinutesPerYear() * anticipatedAnnualTestVolume;
-  };
 
-  const resultTotalLaborMinutesPerYear = () => {
-    return (
-      (resultEntryMinutes ?? 0) +
-      (reportPreparationMinutes ?? 0) +
-      (reportDistributionMinutes ?? 0)
+  const sampleTotalLaborPerYear = () =>
+    CostHelper.getTestSampleTotalLaborPerYear(
+      sampleTotalLaborMinutesPerYear(),
+      anticipatedAnnualTestVolume(),
     );
-  };
-  const resultTotalLaborPerYear = () => {
-    return (
-      (resultTotalLaborMinutesPerYear() / 60) * (avgHourWageReportStaff ?? 0)
+
+  const resultTotalLaborMinutesPerYear = () =>
+    CostHelper.getTestResultTotalLaborMinutesPerYear(
+      resultEntryMinutes,
+      reportPreparationMinutes,
+      reportDistributionMinutes,
     );
-  };
+
+  const resultTotalLaborPerYear = () =>
+    CostHelper.getTestResultTotalLaborPerYear(
+      resultTotalLaborMinutesPerYear(),
+      avgHourWageReportStaff,
+    );
 
   const updateVaues = (data: any) => {
     // details
@@ -232,21 +238,18 @@ const AdminTestEdit = () => {
     setTestRunsDayPerWeek(data.runs_day_week);
     setTestRunsShiftPerWeek(data.runs_shift_day);
 
-
     // labor per sample
     setAvgHourWageAnalysisStaff(data.avg_hr_wage_analysis);
     setSetupMinutes(data.setup_min);
     setAnalysisMinutes(data.analysis_min);
     setResultReviewMinutes(data.result_review_min);
-    setResultDocumentationMinutes(data.result_doc_min); 
+    setResultDocumentationMinutes(data.result_doc_min);
     setRetention(data.retention);
     // labor per result
     setAvgHourWageReportStaff(data.avg_hr_wage_report);
     setResultEntryMinutes(data.result_entry_min);
     setReportPreparationMinutes(data.report_preparation_min);
     setReportDistributionMinutes(data.report_distribution_min);
-    
-
   };
 
   const loadLists = (data: any) => {
@@ -349,7 +352,7 @@ const AdminTestEdit = () => {
       annual_walkins: testWalkin,
       // totals
       annual_shift: testPercentShift,
-      annual_total: anticipatedAnnualTestVolume,
+      annual_total: anticipatedAnnualTestVolume(),
 
       //plans
       sites_no: testSitesNo,
@@ -358,8 +361,8 @@ const AdminTestEdit = () => {
       //runs
       runs_day_week: testRunsDayPerWeek,
       runs_shift_day: testRunsShiftPerWeek,
-      runs_annual: annualRuns,
-      runs_average_volume: testVolumePerRun,
+      runs_annual: annualRuns(),
+      runs_average_volume: testVolumePerRun(),
 
       // labor per sample
       avg_hr_wage_analysis: avgHourWageAnalysisStaff,
@@ -429,9 +432,9 @@ const AdminTestEdit = () => {
 
       if (options.summaryProcess === "finalize") {
         // Optional: round to 2 decimals
-        if (anticipatedAnnualTestVolume > 0) {
+        if (anticipatedAnnualTestVolume() > 0) {
           options.totalValue = Number(
-            options.totalValue / anticipatedAnnualTestVolume,
+            options.totalValue / anticipatedAnnualTestVolume(),
           );
         } else {
           options.totalValue = 0;
@@ -563,7 +566,7 @@ const AdminTestEdit = () => {
                       Total Annual Test Volume
                     </div>
                     <div className="dx-field-value-static">
-                      <strong>{Assist.formatNumber(annualTestVolume)}</strong>
+                      <strong>{Assist.formatNumber(annualTestVolume())}</strong>
                     </div>
                   </div>
                   <div className="dx-field">
@@ -588,7 +591,7 @@ const AdminTestEdit = () => {
                     </div>
                     <div className="dx-field-value-static">
                       <strong>
-                        {Assist.formatNumber(anticipatedAnnualTestVolume)}
+                        {Assist.formatNumber(anticipatedAnnualTestVolume())}
                       </strong>
                     </div>
                   </div>
@@ -663,7 +666,7 @@ const AdminTestEdit = () => {
                   <div className="dx-field">
                     <div className="dx-field-label">Annual # 'Runs'</div>
                     <div className="dx-field-value-static">
-                      <strong>{Assist.formatNumber(annualRuns)}</strong>
+                      <strong>{Assist.formatNumber(annualRuns())}</strong>
                     </div>
                   </div>
                   <div className="dx-field">
@@ -671,7 +674,7 @@ const AdminTestEdit = () => {
                       Average Test Volume per 'Run'
                     </div>
                     <div className="dx-field-value-static">
-                      <strong>{Assist.formatNumber(testVolumePerRun)}</strong>
+                      <strong>{Assist.formatNumber(testVolumePerRun())}</strong>
                     </div>
                   </div>
                 </div>

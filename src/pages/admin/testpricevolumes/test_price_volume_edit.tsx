@@ -48,7 +48,7 @@ import DataGrid, {
 import type { DropDownBoxTypes } from "devextreme-react/drop-down-box";
 import type { DataGridTypes } from "devextreme-react/data-grid";
 
-const AdminInstrumentEdit = () => {
+const AdminTestPriceVolumeEdit = () => {
   //user
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -94,7 +94,7 @@ const AdminInstrumentEdit = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
 
-  const pageConfig = new PageConfig("Instrument", "", "", "Instrument", "");
+  const pageConfig = new PageConfig("Test Price Volume", "", "", "Test Price Volume", "");
 
   pageConfig.Id = eId == undefined ? 0 : Number(eId);
 
@@ -104,7 +104,7 @@ const AdminInstrumentEdit = () => {
       setLoading(true);
 
       setTimeout(() => {
-        Assist.loadData(pageConfig.Title, `instruments/id/${pageConfig.Id}`)
+        Assist.loadData(pageConfig.Title, `test-price-volmes/id/${pageConfig.Id}`)
           .then((data: any) => {
             setLoading(false);
             setLabsData(data.labs);         
@@ -526,4 +526,4 @@ const AdminInstrumentEdit = () => {
   );
 };
 
-export default AdminInstrumentEdit;
+export default AdminTestPriceVolumeEdit;

@@ -10,6 +10,7 @@ export { default as SignupPage } from '../auth/signup'
 export { default as AdminUsersPage } from './admin/users/user_list'
 export { default as AdminUserEditPage } from './admin/users/user_edit'
 export { default as AdminUserPage } from './admin/users/user'
+export { default as AdminLoginsPage } from './admin/users/user_logins'
 //report
 
 //labs
@@ -32,6 +33,9 @@ export { default as AdminControlEditPage } from './admin/controls/control_edit'
 export { default as AdminInstrumentsPage } from './admin/instruments/instrument_list'
 export { default as AdminInstrumentEditPage } from './admin/instruments/instrument_edit'
 
+//instruments
+export { default as AdminTestPriceVolumesPage } from './admin/testpricevolumes/test_price_volume_list'
+export { default as AdminTestPriceVolumeEditPage } from './admin/testpricevolumes/test_price_volume_edit'
 
 //dashboard
 export { default as MemberDashboardPage } from './dashboard'

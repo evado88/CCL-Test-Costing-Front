@@ -34,6 +34,8 @@ import AppInfo from "../../../classes/app-info";
 import DataGrid, { Column, Pager, Paging } from "devextreme-react/data-grid";
 import FileUploader from "devextreme-react/file-uploader";
 import DropDownBox, { DropDownBoxTypes } from "devextreme-react/drop-down-box";
+import { confirm } from "devextreme/ui/dialog";
+import CostHelper from "../../../classes/costing-helper";
 
 const InstrumentsDataImport = () => {
   //user
@@ -44,46 +46,65 @@ const InstrumentsDataImport = () => {
   //posting
   const [importType, setImportType] = useState<string | undefined>("Tests");
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
-  const [rateList, setRateList] = useState<any[]>([]);
+  const [itemList, setItemList] = useState<any[]>([]);
 
   //service
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
 
-  const pageConfig = new PageConfig("Instruments", "", "", "", "");
+  const pageConfig = new PageConfig(
+    "Instruments",
+    "instruments/list",
+    "",
+    "",
+    "instruments/import",
+  );
 
-  //columns
   const onFormSubmit = (e: React.FormEvent) => {
-    setSaving(true);
-
     e.preventDefault();
+
+    if (itemList.length == 0) {
+      Assist.showMessage(
+        `Please upload a list of ${pageConfig.Title} first`,
+        "warning",
+      );
+      return;
+    }
+
+    let result = confirm(
+      `Are you sure you want to import this list of ${pageConfig.Title}?`,
+      "Confirm submission",
+    );
+    result.then((dialogResult) => {
+      if (dialogResult) {
+        submitUploadItems();
+      }
+    });
+  };
+
+  const submitUploadItems = () => {
+    setSaving(true);
 
     const postData = {
       user_id: user.userid,
-      cat_name: name,
-      rate_list: rateList,
+      items: itemList,
     };
 
-    const url =
-      pageConfig.Id == 0
-        ? `categories/create`
-        : `categories/update/${pageConfig.Id}`;
-
     setTimeout(() => {
-      Assist.postPutData(pageConfig.Title, url, postData, pageConfig.Id)
+      Assist.postPutData(
+        pageConfig.Title,
+        pageConfig.UpdateUrl,
+        postData,
+        pageConfig.Id,
+      )
         .then((data: any) => {
           setSaving(false);
 
-          Assist.showMessage(
-            `You have successfully updated the ${pageConfig.Title}!`,
-            "success",
-          );
+          Assist.showMessage(data.message, "success");
 
-          if (pageConfig.Id == 0) {
-            //navigate
-            navigate(`/admin/categories/edit/${data.id}`);
-          }
+          //navigate
+          navigate(pageConfig.Url);
         })
         .catch((message) => {
           setSaving(false);
@@ -117,7 +138,7 @@ const InstrumentsDataImport = () => {
 
       {/* chart start */}
       <Row>
-        <Col sz={12} sm={12} lg={9}>
+        <Col sz={12} sm={12} lg={12}>
           <Card title="Properties" showHeader={true}>
             <form id="formMain" onSubmit={onFormSubmit}>
               <div className="form">
@@ -143,7 +164,31 @@ const InstrumentsDataImport = () => {
                               "error",
                             );
                           } else {
-                            setRateList(res.items);
+                            const items = Array.from(res.items);
+
+                            items.forEach((item: any) => {
+                              item.annual_cost =
+                                CostHelper.getInstrumentAnnualCost(
+                                  item.amortization,
+                                  item.cost,
+                                );
+
+                              item.calibration_annual_cost =
+                                CostHelper.getInstrumentAnnualCalibrationCost(
+                                  item.calibration_cycle,
+                                  item.calibration_kit_cost,
+                                  item.calibration_service_cost,
+                                );
+
+                              item.total_cost =
+                                CostHelper.getInstrumentAnnualTotalCost(
+                                  item.annual_cost,
+                                  item.maintenance_cost,
+                                  item.calibration_annual_cost,
+                                );
+                            });
+
+                            setItemList(items);
                           }
                         } else {
                           Assist.showMessage(
@@ -163,7 +208,7 @@ const InstrumentsDataImport = () => {
                   <div className="dx-field">
                     <DataGrid
                       className={"dx-card wide-card"}
-                      dataSource={rateList}
+                      dataSource={itemList}
                       keyExpr={"no"}
                       noDataText={`No import file uploaded`}
                       showBorders={false}
@@ -177,36 +222,50 @@ const InstrumentsDataImport = () => {
                       <Column
                         dataField="no"
                         caption="No"
-                        hidingPriority={10}
+                        hidingPriority={13}
                       ></Column>
                       <Column
                         dataField="name"
                         caption="Name"
-                        hidingPriority={9}
+                        hidingPriority={12}
+                        sortOrder="asc"
                       ></Column>
                       <Column
                         dataField="description"
                         caption="Description"
+                        hidingPriority={11}
                       ></Column>
                       <Column
                         dataField="serial_no"
                         caption="Serial No"
-                        hidingPriority={8}
+                        hidingPriority={10}
                       ></Column>
                       <Column
                         dataField="cost"
                         caption="Cost"
                         format={",##0.###"}
-                        hidingPriority={7}
+                        hidingPriority={9}
                       ></Column>
                       <Column
                         dataField="amortization"
                         caption="Amortization"
-                        hidingPriority={6}
+                        hidingPriority={8}
                       ></Column>
                       <Column
                         dataField="maintenance_cost"
                         caption="Maintenance Cost"
+                        format={",##0.###"}
+                        hidingPriority={7}
+                      ></Column>
+                      <Column
+                        dataField="annual_cost"
+                        caption="Annual Cost"
+                        format={",##0.###"}
+                        hidingPriority={6}
+                      ></Column>
+                      <Column
+                        dataField="total_cost"
+                        caption="Total Cost"
                         format={",##0.###"}
                         hidingPriority={5}
                       ></Column>
@@ -225,7 +284,13 @@ const InstrumentsDataImport = () => {
                         dataField="calibration_service_cost"
                         caption="Calibration Service Cost"
                         format={",##0.###"}
-                        hidingPriority={3}
+                        hidingPriority={2}
+                      ></Column>
+                      <Column
+                        dataField="calibration_annual_cost"
+                        caption="Calibration Annual Cost"
+                        format={",##0.###"}
+                        hidingPriority={1}
                       ></Column>
                     </DataGrid>
                   </div>

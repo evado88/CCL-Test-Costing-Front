@@ -56,6 +56,147 @@ const AdminTests = () => {
     [],
   );
 
+  const columns = [
+    { dataField: "id", caption: "ID", hidingPriority: 24 },
+    {
+      dataField: "name",
+      caption: "Name",
+      hidingPriority: 23,
+      sortOrder: "asc",
+    },
+    {
+      dataField: "annual_nhima",
+      caption: "Annual NHIMA",
+      format: ",##0.###",
+    },
+    {
+      dataField: "annual_credit",
+      caption: "Annual Credit",
+      format: ",##0.###",
+    },
+    {
+      dataField: "annual_research",
+      caption: "Annual Research",
+      format: ",##0.###",
+    },
+    {
+      dataField: "annual_walkins",
+      caption: "Annual Walkins",
+      format: ",##0.###",
+    },
+    {
+      dataField: "annual_shift",
+      caption: "Projected % Shift to Testing",
+      format: ",##0.###",
+    },
+    {
+      dataField: "annual_total",
+      caption: "Anticipated Annual Volume",
+      format: ",##0.###",
+    },
+    {
+      dataField: "sites_no",
+      caption: "Sites Performing Test",
+      format: ",##0.###",
+    },
+    {
+      dataField: "staff_no",
+      caption: "Staff Performing Test",
+      format: ",##0.###",
+    },
+    {
+      dataField: "runs_day_week",
+      caption: "No of Days Per Week Test is Run",
+      format: ",##0.###",
+    },
+    {
+      dataField: "runs_shift_day",
+      caption: "No of Shifts Per Day Rest is Run",
+
+      format: ",##0.###",
+    },
+    {
+      dataField: "runs_annual",
+      caption: "Annual # Runs",
+      format: ",##0.###",
+    },
+    {
+      dataField: "runs_average_volume",
+      caption: "Average Test Volume Per Run",
+      format: ",##0.###",
+    },
+    {
+      dataField: "avg_hr_wage_analysis",
+      caption: "Average Hourly Wage for Staff Performing Analysis",
+      format: ",##0.###",
+    },
+    {
+      dataField: "setup_min",
+      caption: "Set Up (hands on min)",
+      format: ",##0.###",
+    },
+    {
+      dataField: "analysis_min",
+      caption: "Analysis (hands on min)",
+      format: ",##0.###",
+    },
+    {
+      dataField: "result_review_min",
+      caption: "Result Review (min)",
+      format: ",##0.###",
+    },
+    {
+      dataField: "result_doc_min",
+      caption: "Result Documentation (min)",
+      format: ",##0.###",
+    },
+    {
+      dataField: "retention",
+      caption: "Retention",
+      format: ",##0.###",
+    },
+    {
+      dataField: "total_labor_analysis_min",
+      caption: "Total labor (min)",
+      format: ",##0.###",
+    },
+    {
+      dataField: "total_labor_analysis_year",
+      caption: "Total Labor Per Year",
+      format: ",##0.###",
+    },
+    {
+      dataField: "avg_hr_wage_report",
+      caption: "Average Hourly Wage for Staff Producing Reports",
+      format: ",##0.###",
+    },
+    {
+      dataField: "result_entry_min",
+      caption: "Result Entry (min)",
+      format: ",##0.###",
+    },
+    {
+      dataField: "report_preparation_min",
+      caption: "Report Preparation (min)",
+      format: ",##0.###",
+    },
+    {
+      dataField: "report_distribution_min",
+      caption: "Report Distribution (min)",
+      format: ",##0.###",
+    },
+    {
+      dataField: "total_labor_result_min",
+      caption: "Total labor (min)",
+      format: ",##0.###",
+    },
+    {
+      dataField: "total_labor_result_year",
+      caption: "Total labor Cost/Test)",
+      format: ",##0.###",
+    },
+  ];
+
   return (
     <div className="page-content" style={{ minHeight: "862px" }}>
       <Titlebar
@@ -102,103 +243,15 @@ const AdminTests = () => {
                 />
                 <Item name="columnChooserButton" />
               </Toolbar>
-              <Column dataField="id" caption="ID" hidingPriority={17}></Column>
-              <Column
-                dataField="name"
-                caption="Name"
-                hidingPriority={16}
-                sortOrder="asc"
-                cellRender={(e) => {
-                  return (
-                    <Link to={`/admin/tests/edit/${e.data.id}`}>{e.text}</Link>
-                  );
-                }}
-              ></Column>
-              <Column
-                dataField="annual_nhima"
-                caption="Annual NHIMA"
-                format={",##0.###"}
-                hidingPriority={15}
-              ></Column>
-              <Column
-                dataField="annual_credit"
-                caption="Annual Credit"
-                format={",##0.###"}
-                hidingPriority={14}
-              ></Column>
-              <Column
-                dataField="annual_research"
-                caption="Annual Research"
-                format={",##0.###"}
-                hidingPriority={13}
-              ></Column>
-              <Column
-                dataField="annual_walkins"
-                caption="Annual Walkins"
-                format={",##0.###"}
-                hidingPriority={12}
-              ></Column>
-              <Column
-                dataField="annual_shift"
-                caption="Annual Shift"
-                format={",##0.###"}
-                hidingPriority={11}
-              ></Column>
-              <Column
-                dataField="annual_total"
-                caption="Annual Total"
-                format={",##0.###"}
-                hidingPriority={10}
-              ></Column>
-              <Column
-                dataField="sites_no"
-                caption="Sites No"
-                format={",##0.###"}
-                hidingPriority={9}
-              ></Column>
-              <Column
-                dataField="staff_no"
-                caption="Staff No"
-                format={",##0.###"}
-                hidingPriority={8}
-              ></Column>
-              <Column
-                dataField="runs_day_week"
-                caption="Days Per Week"
-                format={",##0.###"}
-                hidingPriority={7}
-              ></Column>
-              <Column
-                dataField="runs_shift_day"
-                caption="Shifts Per Day"
-                format={",##0.###"}
-                hidingPriority={6}
-              ></Column>
-              <Column
-                dataField="runs_annual"
-                caption="Annual Runs"
-                format={",##0.###"}
-                hidingPriority={5}
-              ></Column>
-              <Column
-                dataField="runs_average_volume"
-                caption="Volume Per Run"
-                format={",##0.###"}
-                hidingPriority={4}
-              ></Column>
-              <Column
-                dataField="created_by"
-                caption="User"
-                minWidth={120}
-                hidingPriority={3}
-              ></Column>
-              <Column
-                dataField="created_at"
-                caption="Date"
-                dataType="date"
-                format="dd MMM yyy HH:MM"
-                hidingPriority={1}
-              ></Column>
+              {columns.map((col, index) => (
+                <Column
+                  key={col.dataField}
+                  dataField={col.dataField}
+                  caption={col.caption}
+                  hidingPriority={columns.length - index}
+                  format={col.format}
+                />
+              ))}
             </DataGrid>
           </Card>
         </Col>

@@ -108,11 +108,11 @@ const AdminInstrunments = () => {
                 />
                 <Item name="columnChooserButton" />
               </Toolbar>
-              <Column dataField="id" caption="ID" hidingPriority={10}></Column>
+              <Column dataField="id" caption="ID" hidingPriority={14}></Column>
               <Column
                 dataField="name"
                 caption="Name"
-                hidingPriority={9}
+                hidingPriority={13}
                 cellRender={(e) => {
                   return (
                     <Link to={`/admin/instruments/edit/${e.data.id}`}>
@@ -124,34 +124,57 @@ const AdminInstrunments = () => {
               <Column
                 dataField="serial_no"
                 caption="Serial No"
-                hidingPriority={8}
+                hidingPriority={12}
               ></Column>
               <Column
                 dataField="cost"
                 caption="Cost"
                 format={",##0.###"}
-                hidingPriority={7}
+                hidingPriority={11}
               ></Column>
               <Column
                 dataField="amortization"
                 caption="Amortization"
-                hidingPriority={6}
+                hidingPriority={10}
               ></Column>
               <Column
                 dataField="maintenance_cost"
                 caption="Maintenance Cost"
                 format={",##0.###"}
-                hidingPriority={5}
+                hidingPriority={9}
               ></Column>
               <Column
                 dataField="annual_cost"
                 caption="Annual Cost"
                 format={",##0.###"}
-                hidingPriority={4}
+                hidingPriority={8}
               ></Column>
               <Column
                 dataField="total_cost"
                 caption="Total Cost"
+                format={",##0.###"}
+                hidingPriority={7}
+              ></Column>
+              <Column
+                dataField="calibration_cycle"
+                caption="Calibrations Per Year"
+                hidingPriority={6}
+              ></Column>
+              <Column
+                dataField="calibration_kit_cost"
+                caption="Calibration Kit Cost"
+                format={",##0.###"}
+                hidingPriority={5}
+              ></Column>
+              <Column
+                dataField="calibration_service_cost"
+                caption="Calibration Service Cost"
+                format={",##0.###"}
+                hidingPriority={4}
+              ></Column>
+                 <Column
+                dataField="calibration_annual_cost"
+                caption="Calibration Annual Cost"
                 format={",##0.###"}
                 hidingPriority={3}
               ></Column>
